@@ -926,52 +926,21 @@
                 delay: 0.6
             });
 
-            // Generic section reveals
+            // Single bulletproof section reveal loop with once: true
             const revealElements = document.querySelectorAll(".gs-reveal");
             revealElements.forEach((elem) => {
                 gsap.from(elem, {
                     scrollTrigger: {
                         trigger: elem,
-                        start: "top 85%",
-                        toggleActions: "play none none none"
+                        start: "top 88%",
+                        once: true
                     },
-                    y: 60,
+                    y: 40,
                     opacity: 0,
                     duration: 0.8,
                     ease: "power3.out"
                 });
             });
-            
-            // Staggered reveals for grids
-            const flowSteps = document.querySelectorAll(".flow-step");
-            if(flowSteps.length) {
-                gsap.from(flowSteps, {
-                    scrollTrigger: {
-                        trigger: ".flow-grid",
-                        start: "top 80%",
-                    },
-                    y: 40,
-                    opacity: 0,
-                    duration: 0.8,
-                    stagger: 0.2,
-                    ease: "power3.out"
-                });
-            }
-
-            const featureCards = document.querySelectorAll(".feature-card");
-            if(featureCards.length) {
-                gsap.from(featureCards, {
-                    scrollTrigger: {
-                        trigger: ".features-grid",
-                        start: "top 80%",
-                    },
-                    y: 40,
-                    opacity: 0,
-                    duration: 0.8,
-                    stagger: 0.1,
-                    ease: "power3.out"
-                });
-            }
         }
 
         // CountUp animation
