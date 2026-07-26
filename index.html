@@ -3,48 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MeshAuth | Phishing-Proof Biometric WebAuthn</title>
-    <meta name="description" content="Next-gen WebAuthn biometric authentication infrastructure. Replace passwords with phishing-proof ECDSA signatures. Secure, fast, and 10x cheaper than Auth0.">
-    <link rel="canonical" href="https://itsoumya-d.github.io/meshauth/">
-    <meta property="og:title" content="MeshAuth | Phishing-Proof Biometric WebAuthn">
-    <meta property="og:description" content="Next-gen WebAuthn biometric authentication infrastructure. Replace passwords with phishing-proof ECDSA signatures.">
+    <title>MeshAuth | Passwordless WebAuthn/Passkey Authentication</title>
+    <meta name="description" content="MeshAuth is an elite, passwordless WebAuthn and Passkey authentication system. Phishing-proof by design. The best free Auth0 alternative for passkey authentication.">
+    <meta name="theme-color" content="#09090B">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="MeshAuth | Passwordless Authentication">
+    <meta property="og:description" content="Elite passwordless WebAuthn/Passkey authentication. Phishing-proof by design.">
     <meta property="og:type" content="website">
-    <meta name="twitter:card" content="summary_large_image">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.260.0/lucide.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsrsasign/10.5.26/jsrsasign-all-min.js"></script>
-
+    
+    <!-- JSON-LD -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "SoftwareApplication",
       "name": "MeshAuth",
-      "applicationCategory": "SecurityApplication",
-      "operatingSystem": "Web",
+      "applicationCategory": "SecuritySoftware",
+      "operatingSystem": "All",
       "offers": {
         "@type": "Offer",
         "price": "0",
         "priceCurrency": "USD"
-      },
-      "creator": {
-        "@type": "Person",
-        "name": "Soumya Debnath",
-        "email": "soumyadebnath1661@gmail.com",
-        "telephone": "+91 7031648617"
       }
-    }
-    </script>
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      "itemListElement": [{
-        "@type": "ListItem",
-        "position": 1,
-        "name": "Home",
-        "item": "https://itsoumya-d.github.io/meshauth/"
-      }]
     }
     </script>
     <script type="application/ld+json">
@@ -53,17 +36,10 @@
       "@type": "FAQPage",
       "mainEntity": [{
         "@type": "Question",
-        "name": "What makes MeshAuth phishing-proof?",
+        "name": "What is the best free Auth0 alternative for passkey authentication?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "MeshAuth uses WebAuthn with ECDSA signatures directly linked to the domain origin, meaning intercepted credentials cannot be reused."
-        }
-      }, {
-        "@type": "Question",
-        "name": "Is it cheaper than Okta and Auth0?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Yes, our BSL 1.1 model provides highly optimized infrastructure making it up to 10x more cost-effective."
+          "text": "MeshAuth is the best free Auth0 alternative, offering seamless WebAuthn and passkey integration out of the box."
         }
       }]
     }
@@ -71,360 +47,962 @@
 
     <style>
         :root {
-            --bg-color: #09090B;
+            --bg: #09090B;
             --primary: #F59E0B;
             --secondary: #06B6D4;
-            --accent: #E11D48;
+            --danger: #E11D48;
+            --text-body: #D4D4D8;
+            --text-heading: #FAFAFA;
+            --font-heading: 'Space Grotesk', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --font-code: 'JetBrains Mono', monospace;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.06);
         }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
-            background-color: var(--bg-color);
-            color: #ffffff;
-            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-body);
+            font-family: var(--font-body);
+            font-weight: 300;
+            line-height: 1.5;
             overflow-x: hidden;
+            position: relative;
         }
-        h1, h2, h3, h4, h5, h6, .space-grotesk {
-            font-family: 'Space Grotesk', sans-serif;
-        }
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        .mesh-gradient {
-            background: radial-gradient(circle at 50% 50%, rgba(245, 158, 11, 0.15), transparent 60%),
-                        radial-gradient(circle at 80% 20%, rgba(6, 182, 212, 0.1), transparent 50%),
-                        radial-gradient(circle at 20% 80%, rgba(225, 29, 72, 0.1), transparent 50%);
-            position: absolute;
-            inset: 0;
-            z-index: -1;
+
+        /* Noise filter */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
             pointer-events: none;
+            z-index: 50;
+            opacity: 0.03;
+            background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
         }
-        .text-gradient-gold {
-            background: linear-gradient(to right, #FCD34D, #F59E0B);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--font-heading);
+            color: var(--text-heading);
+            letter-spacing: -0.03em;
+            line-height: 1.1;
         }
-        
-        /* Scanner animations */
-        .scanner-ring {
-            position: absolute;
-            inset: 0;
-            border-radius: 50%;
-            border: 2px solid var(--primary);
-            opacity: 0;
-            transform: scale(0.8);
+
+        a {
+            color: inherit;
+            text-decoration: none;
         }
-        @keyframes pulse-ring {
-            0% { transform: scale(0.8); opacity: 0.8; }
-            100% { transform: scale(1.5); opacity: 0; }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
         }
-        .scanning .scanner-ring:nth-child(1) { animation: pulse-ring 1.5s infinite; }
-        .scanning .scanner-ring:nth-child(2) { animation: pulse-ring 1.5s infinite 0.5s; }
-        .scanning .scanner-ring:nth-child(3) { animation: pulse-ring 1.5s infinite 1s; }
-        
-        .fingerprint-icon {
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 64px;
+            background: rgba(9, 9, 11, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            z-index: 40;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .logo {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 20px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+        }
+
+        .nav-links a {
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-heading);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 48px;
+            padding: 0 32px;
+            border-radius: 12px;
+            font-weight: 500;
+            font-size: 16px;
+            cursor: pointer;
             transition: all 0.3s ease;
-            filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.3));
+            border: none;
         }
-        .scanning .fingerprint-icon {
-            filter: drop-shadow(0 0 20px rgba(245, 158, 11, 0.8));
+
+        .btn-primary {
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+            color: #000;
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.15);
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 30px rgba(245, 158, 11, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-heading);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        section {
+            padding: 120px 0;
+            position: relative;
+        }
+
+        /* Hero */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding-top: 64px;
+        }
+
+        .hero h1 {
+            font-size: clamp(48px, 8vw, 80px);
+            margin-bottom: 24px;
+            max-width: 900px;
+            margin-inline: auto;
+        }
+
+        .hero p {
+            font-size: 20px;
+            color: var(--text-body);
+            max-width: 600px;
+            margin: 0 auto 48px;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+        }
+
+        .fingerprint {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 48px;
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .fingerprint svg {
+            width: 40px;
+            height: 40px;
+            fill: var(--primary);
+        }
+
+        .scanner {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--primary);
+            box-shadow: 0 0 10px var(--primary);
+            animation: scan 2s infinite ease-in-out alternate;
+        }
+
+        @keyframes scan {
+            0% { top: 10%; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { top: 90%; opacity: 0; }
+        }
+
+        /* Metrics */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 32px;
+            text-align: center;
+        }
+
+        .metric-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 48px;
+        }
+
+        .metric-value {
+            font-size: 64px;
+            font-family: var(--font-heading);
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .metric-label {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        /* Cost Comparison */
+        .cost-section {
+            background: rgba(255, 255, 255, 0.01);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .cost-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-top: 64px;
+        }
+
+        .cost-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 48px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .cost-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .cost-card.meshauth {
+            border-color: var(--primary);
+            box-shadow: 0 0 30px rgba(245, 158, 11, 0.05);
+        }
+
+        .cost-name {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--text-heading);
+        }
+
+        .cost-value {
+            font-size: 48px;
+            font-family: var(--font-heading);
+            font-weight: 700;
             color: var(--primary);
         }
+
+        .cost-card:not(.meshauth) .cost-value {
+            color: var(--danger);
+        }
         
-        .code-tab-content { display: none; }
-        .code-tab-content.active { display: block; }
+        .cost-sub {
+            font-size: 14px;
+            color: var(--text-body);
+            opacity: 0.7;
+        }
+
+        /* How it works */
+        .flow-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 48px;
+            margin-top: 64px;
+            position: relative;
+        }
+
+        .flow-step {
+            position: relative;
+            padding: 32px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+        }
+
+        .step-num {
+            position: absolute;
+            top: -20px;
+            left: 32px;
+            width: 40px;
+            height: 40px;
+            background: var(--bg);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-heading);
+            font-weight: 700;
+        }
+
+        .flow-step h3 {
+            margin-top: 16px;
+            margin-bottom: 12px;
+            font-size: 24px;
+        }
+
+        /* Playground */
+        .playground-wrapper {
+            background: #000;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-top: 48px;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+            background: #050505;
+        }
+
+        .tab {
+            padding: 16px 24px;
+            font-family: var(--font-code);
+            font-size: 14px;
+            color: #888;
+            cursor: pointer;
+            border-right: 1px solid var(--border);
+        }
+
+        .tab.active {
+            color: var(--secondary);
+            background: #000;
+            border-bottom: 2px solid var(--secondary);
+        }
+
+        .code-area {
+            padding: 32px;
+            font-family: var(--font-code);
+            font-size: 14px;
+            line-height: 1.6;
+            color: #A1A1AA;
+            overflow-x: auto;
+        }
+
+        .code-area .keyword { color: #F472B6; }
+        .code-area .string { color: #34D399; }
+        .code-area .func { color: var(--secondary); }
+        .code-area .comment { color: #52525B; }
+
+        /* Features */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+            margin-top: 64px;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+        }
+        
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(6, 182, 212, 0.1);
+            color: var(--secondary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            font-size: 24px;
+        }
+
+        .feature-card h3 {
+            font-size: 20px;
+            margin-bottom: 12px;
+        }
+
+        /* FAQ & SEO text */
+        .seo-content {
+            margin-top: 48px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 48px;
+        }
+
+        .seo-content h3 {
+            font-size: 24px;
+            margin-bottom: 16px;
+        }
+
+        .seo-content p {
+            margin-bottom: 24px;
+        }
+
+        /* Pricing */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-top: 64px;
+        }
+        
+        .price-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 48px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .price-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-heading);
+            margin-bottom: 16px;
+        }
+
+        .price-amount {
+            font-family: var(--font-heading);
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--text-heading);
+            margin-bottom: 8px;
+        }
+
+        .price-features {
+            margin: 32px 0;
+            flex-grow: 1;
+        }
+
+        .price-features li {
+            list-style: none;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .price-features li::before {
+            content: "✓";
+            color: var(--primary);
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 64px 0 32px;
+            background: rgba(0,0,0,0.5);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 64px;
+            margin-bottom: 64px;
+        }
+
+        .footer-col h4 {
+            font-size: 16px;
+            margin-bottom: 24px;
+        }
+
+        .footer-links li {
+            list-style: none;
+            margin-bottom: 12px;
+        }
+        
+        .footer-links a {
+            color: var(--text-body);
+            font-size: 14px;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+
+        .copyright {
+            text-align: center;
+            font-size: 14px;
+            color: rgba(255,255,255,0.4);
+            border-top: 1px solid var(--border);
+            padding-top: 32px;
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 12px;
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--primary);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            border-radius: 99px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 24px;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        @media (max-width: 768px) {
+            section { padding: 80px 0; }
+            .hero h1 { font-size: 40px; }
+            .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+            .nav-links { display: none; }
+        }
     </style>
 </head>
-<body class="relative min-h-screen">
-    <div class="mesh-gradient"></div>
-    
-    <nav class="max-w-7xl mx-auto px-6 py-6 flex justify-between items-center relative z-10 border-b border-white/5">
-        <div class="flex items-center gap-2">
-            <i data-lucide="fingerprint" class="w-8 h-8 text-[#F59E0B]"></i>
-            <span class="text-xl font-bold space-grotesk tracking-wide text-white">MeshAuth</span>
+<body>
+
+    <nav>
+        <div class="container nav-inner">
+            <div class="logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                MeshAuth
+            </div>
+            <div class="nav-links">
+                <a href="#how-it-works">How it Works</a>
+                <a href="#features">Features</a>
+                <a href="#pricing">Pricing</a>
+            </div>
+            <a href="#get-started" class="btn btn-secondary" style="height: 36px; padding: 0 16px; font-size: 14px;">Documentation</a>
         </div>
-        <div class="hidden md:flex gap-8 text-sm text-gray-400">
-            <a href="#features" class="hover:text-[#F59E0B] transition-colors">Features</a>
-            <a href="#demo" class="hover:text-[#06B6D4] transition-colors">Demo</a>
-            <a href="#calculator" class="hover:text-[#E11D48] transition-colors">Pricing</a>
-        </div>
-        <button class="bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/30 px-5 py-2 rounded-full font-medium hover:bg-[#F59E0B]/20 transition-all text-sm space-grotesk">
-            Get Started
-        </button>
     </nav>
 
-    <main class="max-w-7xl mx-auto px-6 py-20 relative z-10">
-        <!-- Hero Section -->
-        <section class="text-center max-w-4xl mx-auto mb-32">
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-gray-300 mb-8 backdrop-blur-md">
-                <span class="w-2 h-2 rounded-full bg-[#06B6D4] animate-pulse"></span>
-                WebAuthn FIDO2 Standard Ready
+    <section class="hero" id="home">
+        <div class="container">
+            <div class="fingerprint">
+                <div class="scanner"></div>
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" opacity="0.3"/>
+                    <path d="M12 6c-3.31 0-6 2.69-6 6v1c0 .55.45 1 1 1s1-.45 1-1v-1c0-2.21 1.79-4 4-4s4 1.79 4 4v3c0 1.65-1.35 3-3 3s-3-1.35-3-3v-1c0-.55-.45-1-1-1s-1 .45-1 1v1c0 2.76 2.24 5 5 5s5-2.24 5-5v-3c0-3.31-2.69-6-6-6z"/>
+                    <path d="M9 14v-1c0-1.66 1.34-3 3-3s3 1.34 3 3v1c0 .55.45 1 1 1s1-.45 1-1v-1c0-2.76-2.24-5-5-5s-5 2.24-5 5v1c0 .55.45 1 1 1s1-.45 1-1z"/>
+                </svg>
             </div>
-            <h1 class="text-5xl md:text-7xl font-bold mb-6 leading-tight">
-                Phishing-Proof <br>
-                <span class="text-gradient-gold">Biometric Auth</span>
-            </h1>
-            <p class="text-xl text-gray-400 mb-10 max-w-2xl mx-auto">
-                Replace passwords with cryptographic precision. MeshAuth binds ECDSA signatures directly to domain origins, neutralizing credential theft instantly.
-            </p>
-        </section>
+            <h1 class="hero-title">Authentication without passwords. <span style="color: var(--primary)">Phishing-proof</span> by design.</h1>
+            <p class="hero-subtitle">The elite WebAuthn and Passkey infrastructure for modern applications. Seamlessly integrate secure biometrics with zero PII overhead.</p>
+            <div class="hero-actions">
+                <a href="#get-started" class="btn btn-primary">Start Building Free</a>
+                <a href="#playground" class="btn btn-secondary">View Code</a>
+            </div>
+        </div>
+    </section>
 
-        <!-- Interactive Demo Section -->
-        <section id="demo" class="mb-32">
-            <div class="grid md:grid-cols-2 gap-12 items-center">
-                <div class="glass-panel p-10 rounded-3xl border border-white/10 flex flex-col items-center justify-center min-h-[400px] relative overflow-hidden">
-                    <h3 class="text-xl space-grotesk font-semibold mb-8 text-gray-300">Live Client-Side Biometric Simulation</h3>
-                    
-                    <div class="relative w-32 h-32 flex items-center justify-center mb-8 cursor-pointer group" id="biometric-btn" onclick="startScan()">
-                        <div class="scanner-ring"></div>
-                        <div class="scanner-ring"></div>
-                        <div class="scanner-ring"></div>
-                        <div class="w-24 h-24 rounded-full bg-black border border-white/10 flex items-center justify-center z-10 group-hover:border-[#F59E0B]/50 transition-colors shadow-2xl relative overflow-hidden">
-                            <i data-lucide="scan-face" class="w-12 h-12 text-gray-500 fingerprint-icon"></i>
-                            <div class="absolute inset-0 bg-gradient-to-b from-[#F59E0B]/20 to-transparent -translate-y-full" id="scan-line"></div>
-                        </div>
-                    </div>
-                    <p class="text-sm text-gray-500 text-center" id="scan-status">Click to simulate Touch ID / Face ID</p>
+    <section class="metrics" id="metrics">
+        <div class="container">
+            <div class="metrics-grid">
+                <div class="metric-card gs-reveal">
+                    <div class="metric-value count-up" data-target="0">0</div>
+                    <div class="metric-label">Passwords Stored</div>
+                </div>
+                <div class="metric-card gs-reveal">
+                    <div class="metric-value">L2</div>
+                    <div class="metric-label">WebAuthn Security</div>
+                </div>
+                <div class="metric-card gs-reveal">
+                    <div class="metric-value">100<span style="font-size:32px">%</span></div>
+                    <div class="metric-label">Phishing Proof</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cost-section" id="cost">
+        <div class="container">
+            <div class="section-header gs-reveal">
+                <div class="badge">Cost Analysis</div>
+                <h2 class="section-title">Stop paying the legacy tax</h2>
+                <p>Enterprise identity providers charge exorbitant rates for baseline security features like WebAuthn. MeshAuth democratizes passkeys.</p>
+            </div>
+            <div class="cost-grid">
+                <div class="cost-card gs-reveal">
+                    <div class="cost-name">Auth0</div>
+                    <div class="cost-value">$18K<span style="font-size:24px">/yr</span></div>
+                    <div class="cost-sub">For enterprise B2B passkeys</div>
+                </div>
+                <div class="cost-card meshauth gs-reveal">
+                    <div class="cost-name">MeshAuth</div>
+                    <div class="cost-value">$0</div>
+                    <div class="cost-sub">Self-hosted community edition</div>
+                </div>
+                <div class="cost-card gs-reveal">
+                    <div class="cost-name">Okta</div>
+                    <div class="cost-value">$250K<span style="font-size:24px">/yr</span></div>
+                    <div class="cost-sub">Enterprise workforce deployment</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="how-it-works">
+        <div class="container">
+            <div class="section-header gs-reveal">
+                <h2 class="section-title">Frictionless Flow</h2>
+                <p>A simple 3-step architecture integrating device biometrics directly with your application.</p>
+            </div>
+            <div class="flow-grid">
+                <div class="flow-step gs-reveal">
+                    <div class="step-num">1</div>
+                    <h3>Register Passkey</h3>
+                    <p>User generates a public-private keypair on their device via FaceID, TouchID, or Windows Hello. Private key never leaves the secure enclave.</p>
+                </div>
+                <div class="flow-step gs-reveal">
+                    <div class="step-num">2</div>
+                    <h3>Server Challenge</h3>
+                    <p>When authenticating, the MeshAuth server sends a cryptographic challenge to the client device.</p>
+                </div>
+                <div class="flow-step gs-reveal">
+                    <div class="step-num">3</div>
+                    <h3>Verify Assertion</h3>
+                    <p>The device signs the challenge with the private key. MeshAuth verifies the signature using the stored public key.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="playground">
+        <div class="container">
+            <div class="section-header gs-reveal">
+                <div class="badge">Developer Experience</div>
+                <h2 class="section-title">Integrate in minutes</h2>
+                <p>Simple, well-typed SDKs for every major framework and language.</p>
+            </div>
+            
+            <div class="playground-wrapper gs-reveal">
+                <div class="tabs">
+                    <div class="tab active">register.ts</div>
+                    <div class="tab">authenticate.ts</div>
+                    <div class="tab">server.go</div>
+                </div>
+                <div class="code-area">
+<pre><code><span class="keyword">import</span> { <span class="func">createPasskey</span> } <span class="keyword">from</span> <span class="string">'@meshauth/client'</span>;
+
+<span class="keyword">async function</span> <span class="func">registerUser</span>(username: <span class="keyword">string</span>) {
+  <span class="comment">// 1. Get creation options from your server</span>
+  <span class="keyword">const</span> options = <span class="keyword">await</span> <span class="func">fetch</span>(<span class="string">'/api/auth/register-options'</span>);
+  
+  <span class="comment">// 2. Trigger biometric prompt</span>
+  <span class="keyword">const</span> credential = <span class="keyword">await</span> <span class="func">createPasskey</span>(options);
+  
+  <span class="comment">// 3. Send public key to server</span>
+  <span class="keyword">await</span> <span class="func">fetch</span>(<span class="string">'/api/auth/register'</span>, {
+    method: <span class="string">'POST'</span>,
+    body: <span class="func">JSON.stringify</span>(credential)
+  });
+}</code></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="features">
+        <div class="container">
+            <div class="section-header gs-reveal">
+                <h2 class="section-title">Enterprise Grade</h2>
+                <p>Everything you need for secure, scalable identity management.</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card gs-reveal">
+                    <div class="feature-icon">🛡️</div>
+                    <h3>FIDO2 Certified</h3>
+                    <p>Built on WebAuthn and CTAP protocols, strictly adhering to W3C standards for maximum compatibility.</p>
+                </div>
+                <div class="feature-card gs-reveal">
+                    <div class="feature-icon">🧬</div>
+                    <h3>Biometric Ready</h3>
+                    <p>Native support for Apple FaceID, TouchID, Windows Hello, and Android Biometrics.</p>
+                </div>
+                <div class="feature-card gs-reveal">
+                    <div class="feature-icon">👁️</div>
+                    <h3>Zero PII</h3>
+                    <p>MeshAuth only stores public keys. No passwords, no personal data, minimizing your compliance scope.</p>
+                </div>
+                <div class="feature-card gs-reveal">
+                    <div class="feature-icon">🔑</div>
+                    <h3>Stateless JWT</h3>
+                    <p>Issue secure, signed JSON Web Tokens immediately upon successful biometric assertion.</p>
+                </div>
+                <div class="feature-card gs-reveal">
+                    <div class="feature-icon">📱</div>
+                    <h3>Multi-device Sync</h3>
+                    <p>Leverage Apple, Google, and Microsoft passkey ecosystems for seamless cross-device synchronization.</p>
+                </div>
+                <div class="feature-card gs-reveal">
+                    <div class="feature-icon">🔌</div>
+                    <h3>Offline Verification</h3>
+                    <p>Validate assertions on the edge or in air-gapped environments with pure cryptographic checks.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="faq">
+        <div class="container">
+            <div class="seo-content gs-reveal">
+                <h3>What is the best free Auth0 alternative passkey?</h3>
+                <p>MeshAuth stands out as the premier free Auth0 alternative for passkey and WebAuthn authentication. Unlike legacy identity providers that lock modern security features like biometric authentication behind expensive enterprise tiers (often costing upwards of $18,000/year), MeshAuth provides a self-hosted, BSL-licensed core that is completely free to use. It offers a superior developer experience with zero vendor lock-in, making it the most cost-effective and secure choice for modern applications seeking phishing-resistant authentication.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="pricing">
+        <div class="container">
+            <div class="section-header gs-reveal">
+                <h2 class="section-title">Simple Pricing</h2>
+                <p>BSL 1.1 Licensed. Free for most, reasonable for scale.</p>
+            </div>
+            
+            <div class="pricing-grid">
+                <div class="price-card gs-reveal">
+                    <div class="price-name">Community</div>
+                    <div class="price-amount">$0</div>
+                    <div class="cost-sub">Self-hosted under BSL 1.1</div>
+                    <ul class="price-features">
+                        <li>Unlimited Users</li>
+                        <li>WebAuthn / Passkeys</li>
+                        <li>Community Support</li>
+                    </ul>
+                    <a href="#" class="btn btn-secondary">Deploy Now</a>
                 </div>
                 
-                <div class="glass-panel p-6 rounded-3xl border border-white/10 flex flex-col h-full bg-[#09090B]">
-                    <div class="flex items-center justify-between mb-4 border-b border-white/5 pb-4">
-                        <h3 class="text-sm space-grotesk text-gray-400">Cryptographic Output</h3>
-                        <span class="text-xs bg-[#06B6D4]/10 text-[#06B6D4] px-2 py-1 rounded">Live Stream</span>
+                <div class="price-card gs-reveal" style="border-color: var(--primary); background: rgba(245, 158, 11, 0.05);">
+                    <div class="price-name">Startup</div>
+                    <div class="price-amount">$249<span style="font-size: 16px">/mo</span></div>
+                    <div class="cost-sub">Managed Cloud</div>
+                    <ul class="price-features">
+                        <li>Up to 10k MAU</li>
+                        <li>Multi-region availability</li>
+                        <li>Email support</li>
+                        <li>Custom Domains</li>
+                    </ul>
+                    <a href="#" class="btn btn-primary">Start Trial</a>
+                </div>
+                
+                <div class="price-card gs-reveal">
+                    <div class="price-name">Growth</div>
+                    <div class="price-amount">$1,999<span style="font-size: 16px">/mo</span></div>
+                    <div class="cost-sub">Managed Cloud</div>
+                    <ul class="price-features">
+                        <li>Up to 100k MAU</li>
+                        <li>99.99% SLA</li>
+                        <li>Dedicated Slack channel</li>
+                        <li>Advanced Analytics</li>
+                    </ul>
+                    <a href="#" class="btn btn-secondary">Contact Sales</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="logo" style="margin-bottom: 16px;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                        MeshAuth
                     </div>
-                    <div class="font-mono text-xs overflow-y-auto text-gray-300 flex-1 space-y-4" id="crypto-output">
-                        <div class="text-gray-600">Waiting for biometric assertion...</div>
-                    </div>
+                    <p style="color: rgba(255,255,255,0.6); font-size: 14px; max-width: 300px;">
+                        The elite passwordless authentication infrastructure. Phishing-proof, developer-first, and highly scalable.
+                    </p>
+                </div>
+                <div class="footer-col">
+                    <h4>Product</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Features</a></li>
+                        <li><a href="#">Pricing</a></li>
+                        <li><a href="#">Documentation</a></li>
+                        <li><a href="#">Security</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">GitHub</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
                 </div>
             </div>
-        </section>
-
-        <!-- Code Switcher & Architecture -->
-        <section id="features" class="mb-32 grid md:grid-cols-2 gap-12">
-            <div class="glass-panel rounded-3xl border border-white/10 overflow-hidden">
-                <div class="flex border-b border-white/10 bg-black/50">
-                    <button class="px-6 py-3 text-sm font-medium text-[#F59E0B] border-b-2 border-[#F59E0B] tab-btn" onclick="switchTab('client')">Client (JS)</button>
-                    <button class="px-6 py-3 text-sm font-medium text-gray-400 hover:text-white tab-btn" onclick="switchTab('server')">Server (Node)</button>
-                </div>
-                <div class="p-6 bg-[#09090B] font-mono text-sm overflow-x-auto">
-<pre id="client-code" class="code-tab-content active text-gray-300">
-<span class="text-[#06B6D4]">const</span> credential = <span class="text-[#E11D48]">await</span> navigator.credentials.get({
-  publicKey: {
-    challenge: serverChallenge,
-    allowCredentials: [{
-      id: credentialId,
-      type: <span class="text-[#F59E0B]">'public-key'</span>
-    }],
-    userVerification: <span class="text-[#F59E0B]">'required'</span>
-  }
-});
-<span class="text-gray-500">// Returns ECDSA signature over challenge</span>
-</pre>
-<pre id="server-code" class="code-tab-content text-gray-300">
-<span class="text-[#06B6D4]">const</span> { verifyAuthenticationResponse } = require(<span class="text-[#F59E0B]">'@simplewebauthn/server'</span>);
-
-<span class="text-[#06B6D4]">const</span> verification = <span class="text-[#E11D48]">await</span> verifyAuthenticationResponse({
-  response: clientResponse,
-  expectedChallenge: storedChallenge,
-  expectedOrigin: <span class="text-[#F59E0B]">'https://app.meshauth.io'</span>,
-  expectedRPID: <span class="text-[#F59E0B]">'meshauth.io'</span>,
-  authenticator: userAuthenticator
-});
-</pre>
-                </div>
-            </div>
-
-            <div>
-                <h2 class="text-3xl font-bold mb-6 space-grotesk">Phishing-Proof Architecture</h2>
-                <div class="space-y-6">
-                    <div class="flex gap-4 items-start">
-                        <div class="w-10 h-10 rounded-full bg-[#E11D48]/10 flex items-center justify-center shrink-0 border border-[#E11D48]/20">
-                            <i data-lucide="shield-alert" class="w-5 h-5 text-[#E11D48]"></i>
-                        </div>
-                        <div>
-                            <h4 class="text-lg font-semibold space-grotesk text-white">Origin Binding</h4>
-                            <p class="text-sm text-gray-400 mt-1">Credentials are mathematically bound to your exact domain. A phishing site on a different origin will fail signature validation instantly.</p>
-                        </div>
-                    </div>
-                    <div class="flex gap-4 items-start">
-                        <div class="w-10 h-10 rounded-full bg-[#06B6D4]/10 flex items-center justify-center shrink-0 border border-[#06B6D4]/20">
-                            <i data-lucide="key" class="w-5 h-5 text-[#06B6D4]"></i>
-                        </div>
-                        <div>
-                            <h4 class="text-lg font-semibold space-grotesk text-white">Zero Shared Secrets</h4>
-                            <p class="text-sm text-gray-400 mt-1">Unlike passwords or OTPs, no secrets are ever sent over the network. Servers only store public keys.</p>
-                        </div>
-                    </div>
-                    <div class="flex gap-4 items-start">
-                        <div class="w-10 h-10 rounded-full bg-[#F59E0B]/10 flex items-center justify-center shrink-0 border border-[#F59E0B]/20">
-                            <i data-lucide="cpu" class="w-5 h-5 text-[#F59E0B]"></i>
-                        </div>
-                        <div>
-                            <h4 class="text-lg font-semibold space-grotesk text-white">Hardware Backed</h4>
-                            <p class="text-sm text-gray-400 mt-1">Leverages secure enclaves (TPMs, Secure Enclave) on modern devices to protect private keys from exfiltration.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ROI / Cost Calculator -->
-        <section id="calculator" class="mb-20 glass-panel p-10 rounded-3xl border border-white/10 max-w-4xl mx-auto">
-            <h2 class="text-3xl font-bold mb-8 text-center space-grotesk">Auth Provider Cost Comparison</h2>
-            
-            <div class="mb-8">
-                <label class="block text-sm text-gray-400 mb-2">Monthly Active Users (MAU): <span id="mau-val" class="text-white font-bold">50,000</span></label>
-                <input type="range" min="1000" max="500000" step="1000" value="50000" class="w-full h-2 bg-gray-800 rounded-lg appearance-none cursor-pointer accent-[#F59E0B]" id="mau-slider" oninput="updateCost()">
-            </div>
-
-            <div class="grid md:grid-cols-3 gap-6 text-center">
-                <div class="p-6 rounded-2xl bg-black border border-white/5">
-                    <h4 class="text-gray-400 text-sm mb-2">Okta (B2B)</h4>
-                    <div class="text-3xl font-bold text-gray-300" id="cost-okta">$0</div>
-                    <div class="text-xs text-gray-600 mt-2">Est. monthly</div>
-                </div>
-                <div class="p-6 rounded-2xl bg-black border border-white/5">
-                    <h4 class="text-gray-400 text-sm mb-2">Auth0 (B2C)</h4>
-                    <div class="text-3xl font-bold text-gray-300" id="cost-auth0">$0</div>
-                    <div class="text-xs text-gray-600 mt-2">Est. monthly</div>
-                </div>
-                <div class="p-6 rounded-2xl bg-[#F59E0B]/10 border border-[#F59E0B]/30 relative overflow-hidden">
-                    <div class="absolute inset-0 bg-gradient-to-b from-[#F59E0B]/10 to-transparent"></div>
-                    <h4 class="text-[#F59E0B] text-sm mb-2 relative z-10">MeshAuth</h4>
-                    <div class="text-3xl font-bold text-white relative z-10" id="cost-mesh">$0</div>
-                    <div class="text-xs text-[#F59E0B]/80 mt-2 relative z-10">BSL 1.1 Model</div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer class="border-t border-white/5 py-12 text-center text-sm text-gray-500 relative z-10 bg-black/50 backdrop-blur-sm">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="flex flex-col md:flex-row justify-between items-center gap-6 mb-8">
-                <div class="flex items-center gap-2">
-                    <i data-lucide="fingerprint" class="w-6 h-6 text-[#F59E0B]"></i>
-                    <span class="font-bold space-grotesk text-gray-300">MeshAuth</span>
-                </div>
-                <div class="flex gap-6 text-gray-400">
-                    <div>Author: <span class="text-white">Soumya Debnath</span></div>
-                    <div>Email: <a href="mailto:soumyadebnath1661@gmail.com" class="hover:text-[#F59E0B]">soumyadebnath1661@gmail.com</a></div>
-                    <div>Phone: <span class="text-white">+91 7031648617</span></div>
-                </div>
-            </div>
-            <div class="text-xs text-gray-600 border-t border-white/5 pt-6">
-                <p>&copy; 2026 MeshAuth. Licensed under BSL 1.1.</p>
-                <p class="mt-1">BSL 1.1 Pricing Breakdown: Free for non-production and &lt; 10k MAU. Enterprise SLA starts at $99/mo.</p>
+            <div class="copyright">
+                &copy; 2026 MeshAuth. All rights reserved. BSL 1.1 License.
             </div>
         </div>
     </footer>
 
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    
     <script>
-        lucide.createIcons();
+        gsap.registerPlugin(ScrollTrigger);
 
-        // Biometric Simulation
-        let isScanning = false;
-        
-        function generateRandomHex(length) {
-            return Array.from({length}, () => Math.floor(Math.random()*16).toString(16)).join('');
-        }
+        // Respect prefers-reduced-motion
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-        async function startScan() {
-            if(isScanning) return;
-            isScanning = true;
-            
-            const btn = document.getElementById('biometric-btn');
-            const status = document.getElementById('scan-status');
-            const output = document.getElementById('crypto-output');
-            const scanLine = document.getElementById('scan-line');
-            
-            btn.classList.add('scanning');
-            status.textContent = 'Verifying biometric identity...';
-            status.classList.add('text-[#F59E0B]');
-            
-            // Animate scan line
-            scanLine.style.transition = 'transform 1.5s ease-in-out';
-            scanLine.style.transform = 'translateY(100%)';
-
-            output.innerHTML = `<div class="text-[#06B6D4] opacity-80">> Authenticator requesting user verification...</div>`;
-            
-            setTimeout(() => {
-                output.innerHTML += `<div class="text-gray-400">> User verified locally (Secure Enclave).</div>`;
-                output.innerHTML += `<div class="text-gray-400">> Signing challenge with private key...</div>`;
-                
-                setTimeout(() => {
-                    const signature = generateRandomHex(128);
-                    const clientDataHash = generateRandomHex(64);
-                    const rpIdHash = generateRandomHex(64);
-                    
-                    // Simple JWT Mock
-                    const header = btoa(JSON.stringify({alg:"ES256",typ:"JWT"}));
-                    const payload = btoa(JSON.stringify({sub:"user_xyz", aud:"meshauth.io", iat:Math.floor(Date.now()/1000)}));
-                    const jwt = `${header}.${payload}.${generateRandomHex(40)}`;
-
-                    output.innerHTML += `
-                        <div class="mt-4 border-l-2 border-[#E11D48] pl-3">
-                            <div class="text-[#E11D48] font-bold text-[10px] mb-1">ECDSA SIGNATURE (P-256)</div>
-                            <div class="text-gray-300 break-all text-[10px]">${signature}</div>
-                        </div>
-                        <div class="mt-4 border-l-2 border-[#F59E0B] pl-3">
-                            <div class="text-[#F59E0B] font-bold text-[10px] mb-1">GENERATED JWT SESSION</div>
-                            <div class="text-gray-300 break-all text-[10px]">${jwt}</div>
-                        </div>
-                        <div class="mt-4 text-[#06B6D4] font-bold">> Access Granted.</div>
-                    `;
-                    
-                    btn.classList.remove('scanning');
-                    status.textContent = 'Authentication Successful';
-                    status.classList.remove('text-[#F59E0B]');
-                    status.classList.add('text-green-500');
-                    
-                    scanLine.style.transition = 'none';
-                    scanLine.style.transform = 'translateY(-100%)';
-                    
-                    setTimeout(() => {
-                        isScanning = false;
-                        status.textContent = 'Click to simulate again';
-                        status.classList.remove('text-green-500');
-                        status.classList.add('text-gray-500');
-                    }, 3000);
-
-                }, 1000);
-            }, 800);
-        }
-
-        // Code Tab Switcher
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('text-[#F59E0B]', 'border-b-2', 'border-[#F59E0B]');
-                btn.classList.add('text-gray-400');
+        if (!prefersReducedMotion) {
+            // Hero Title split text simulation (simple fade in words for robust cross-browser)
+            gsap.from(".hero-title", {
+                y: 30,
+                opacity: 0,
+                duration: 1,
+                ease: "power3.out",
+                delay: 0.2
             });
-            event.target.classList.remove('text-gray-400');
-            event.target.classList.add('text-[#F59E0B]', 'border-b-2', 'border-[#F59E0B]');
 
-            document.querySelectorAll('.code-tab-content').forEach(content => {
-                content.classList.remove('active');
+            gsap.from(".hero-subtitle", {
+                y: 20,
+                opacity: 0,
+                duration: 1,
+                ease: "power3.out",
+                delay: 0.4
             });
-            document.getElementById(tabId + '-code').classList.add('active');
-        }
 
-        // Cost Calculator
-        function updateCost() {
-            const mau = document.getElementById('mau-slider').value;
-            document.getElementById('mau-val').textContent = parseInt(mau).toLocaleString();
+            gsap.from(".hero-actions", {
+                y: 20,
+                opacity: 0,
+                duration: 1,
+                ease: "power3.out",
+                delay: 0.6
+            });
+
+            // Generic section reveals
+            const revealElements = document.querySelectorAll(".gs-reveal");
+            revealElements.forEach((elem) => {
+                gsap.from(elem, {
+                    scrollTrigger: {
+                        trigger: elem,
+                        start: "top 85%",
+                        toggleActions: "play none none none"
+                    },
+                    y: 60,
+                    opacity: 0,
+                    duration: 0.8,
+                    ease: "power3.out"
+                });
+            });
             
-            // Rough estimations based on public pricing
-            const oktaCost = mau > 10000 ? (mau * 0.05) : 0; // simplistic
-            const auth0Cost = mau > 7500 ? (mau * 0.03) : 0;
-            const meshCost = mau > 10000 ? (mau * 0.005) + 99 : 0; // Flat base + minimal usage
+            // Staggered reveals for grids
+            const flowSteps = document.querySelectorAll(".flow-step");
+            if(flowSteps.length) {
+                gsap.from(flowSteps, {
+                    scrollTrigger: {
+                        trigger: ".flow-grid",
+                        start: "top 80%",
+                    },
+                    y: 40,
+                    opacity: 0,
+                    duration: 0.8,
+                    stagger: 0.2,
+                    ease: "power3.out"
+                });
+            }
 
-            document.getElementById('cost-okta').textContent = '$' + oktaCost.toLocaleString(undefined, {maximumFractionDigits:0});
-            document.getElementById('cost-auth0').textContent = '$' + auth0Cost.toLocaleString(undefined, {maximumFractionDigits:0});
-            document.getElementById('cost-mesh').textContent = meshCost > 0 ? '$' + meshCost.toLocaleString(undefined, {maximumFractionDigits:0}) : 'Free';
+            const featureCards = document.querySelectorAll(".feature-card");
+            if(featureCards.length) {
+                gsap.from(featureCards, {
+                    scrollTrigger: {
+                        trigger: ".features-grid",
+                        start: "top 80%",
+                    },
+                    y: 40,
+                    opacity: 0,
+                    duration: 0.8,
+                    stagger: 0.1,
+                    ease: "power3.out"
+                });
+            }
         }
-        
-        // Init calc
-        updateCost();
+
+        // CountUp animation
+        const countElements = document.querySelectorAll('.count-up');
+        countElements.forEach(el => {
+            const target = parseInt(el.getAttribute('data-target'));
+            let current = target; // Start at target for 0
+            if (target > 0) {
+                current = 0;
+            }
+            
+            ScrollTrigger.create({
+                trigger: el,
+                start: "top 90%",
+                onEnter: () => {
+                    if (target === 0) return; // Skip if target is 0
+                    const updateCounter = () => {
+                        const increment = target / 30;
+                        if(current < target) {
+                            current += increment;
+                            el.innerText = Math.ceil(current);
+                            requestAnimationFrame(updateCounter);
+                        } else {
+                            el.innerText = target;
+                        }
+                    };
+                    updateCounter();
+                }
+            });
+        });
+
     </script>
 </body>
 </html>
