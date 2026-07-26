@@ -727,12 +727,12 @@
             </div>
             
             <div class="playground-wrapper gs-reveal">
-                <div class="tabs">
-                    <div class="tab active">register.ts</div>
-                    <div class="tab">authenticate.ts</div>
-                    <div class="tab">server.go</div>
+                <div class="tabs" id="meshauth-tabs">
+                    <div class="tab active" data-code="register">register.ts</div>
+                    <div class="tab" data-code="auth">authenticate.ts</div>
+                    <div class="tab" data-code="server">server.go</div>
                 </div>
-                <div class="code-area">
+                <div class="code-area" id="meshauth-code-area">
 <pre><code><span class="keyword">import</span> { <span class="func">createPasskey</span> } <span class="keyword">from</span> <span class="string">'@meshauth/client'</span>;
 
 <span class="keyword">async function</span> <span class="func">registerUser</span>(username: <span class="keyword">string</span>) {
@@ -1002,6 +1002,74 @@
                 }
             });
         });
+
+    
+        // Tab switcher logic
+        const tabCodes = {
+            register: `<pre><code><span class="keyword">import</span> { <span class="func">createPasskey</span> } <span class="keyword">from</span> <span class="string">'@meshauth/client'</span>;
+
+<span class="keyword">async function</span> <span class="func">registerUser</span>(username: <span class="keyword">string</span>) {
+  <span class="comment">// 1. Get creation options from your server</span>
+  <span class="keyword">const</span> options = <span class="keyword">await</span> <span class="func">fetch</span>(<span class="string">'/api/auth/register-options'</span>);
+  
+  <span class="comment">// 2. Trigger biometric prompt</span>
+  <span class="keyword">const</span> credential = <span class="keyword">await</span> <span class="func">createPasskey</span>(options);
+  
+  <span class="comment">// 3. Send public key to server</span>
+  <span class="keyword">await</span> <span class="func">fetch</span>(<span class="string">'/api/auth/register'</span>, {
+    method: <span class="string">'POST'</span>,
+    body: <span class="func">JSON.stringify</span>(credential)
+  });
+}</code></pre>`,
+            auth: `<pre><code><span class="keyword">import</span> { <span class="func">authenticatePasskey</span> } <span class="keyword">from</span> <span class="string">'@meshauth/client'</span>;
+
+<span class="keyword">async function</span> <span class="func">loginUser</span>() {
+  <span class="comment">// 1. Get authentication challenge</span>
+  <span class="keyword">const</span> challenge = <span class="keyword">await</span> <span class="func">fetch</span>(<span class="string">'/api/auth/login-options'</span>);
+  
+  <span class="comment">// 2. Prompt TouchID / FaceID assertion</span>
+  <span class="keyword">const</span> assertion = <span class="keyword">await</span> <span class="func">authenticatePasskey</span>(challenge);
+  
+  <span class="comment">// 3. Verify signature on server & receive JWT</span>
+  <span class="keyword">const</span> res = <span class="keyword">await</span> <span class="func">fetch</span>(<span class="string">'/api/auth/verify'</span>, {
+    method: <span class="string">'POST'</span>,
+    body: <span class="func">JSON.stringify</span>(assertion)
+  });
+  <span class="keyword">const</span> { token } = <span class="keyword">await</span> res.<span class="func">json</span>();
+}</code></pre>`,
+            server: `<pre><code><span class="keyword">package</span> main
+
+<span class="keyword">import</span> (
+    <span class="string">"github.com/itsoumya-d/meshauth/server"</span>
+    <span class="string">"net/http"</span>
+)
+
+<span class="keyword">func</span> <span class="func">main</span>() {
+    auth := server.<span class="func">New</span>(server.Config{
+        RPDisplayName: <span class="string">"My SaaS App"</span>,
+        RPID:          <span class="string">"app.example.com"</span>,
+        RPOrigin:      <span class="string">"https://app.example.com"</span>,
+    })
+
+    http.<span class="func">HandleFunc</span>(<span class="string">"/api/auth/verify"</span>, auth.<span class="func">VerifyAssertionHandler</span>)
+    http.<span class="func">ListenAndServe</span>(<span class="string">":8080"</span>, nil)
+}</code></pre>`
+        };
+
+        const meshTabs = document.querySelectorAll('#meshauth-tabs .tab');
+        const codeArea = document.getElementById('meshauth-code-area');
+        if (meshTabs.length && codeArea) {
+            meshTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    meshTabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    const codeKey = tab.getAttribute('data-code');
+                    if (tabCodes[codeKey]) {
+                        codeArea.innerHTML = tabCodes[codeKey];
+                    }
+                });
+            });
+        }
 
     </script>
 </body>
