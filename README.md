@@ -292,10 +292,32 @@ A: Yes! Modern devices support cross-platform authentication (e.g., using an iPh
 
 ---
 
-## 👨‍💻 Author & License
+## ⚖️ License — Dual-Licensed (AGPL-3.0 + Commercial)
 
-**Author:** Soumya Debnath  
-**Email:** soumyadebnath1661@gmail.com  
-**Phone:** +91 7031648617  
+This project is **dual-licensed** to protect both open-source and commercial interests:
 
-MeshAuth is open-source software licensed under the MIT License. See `LICENSE` for more information. Note that commercial usage may require a separate license; see `COMMERCIAL_LICENSE.md`.
+### 🆓 Open Source — AGPL-3.0
+You may use, modify, and distribute this software under the [GNU Affero General Public License v3.0](https://www.gnu.org/licenses/agpl-3.0.html). **However**, AGPL-3.0 requires that:
+
+- ⚠️ **Any application using this library MUST also be open-sourced under AGPL-3.0**
+- ⚠️ This applies even if the software is only used as a **network service** (SaaS)
+- ⚠️ You must provide complete source code to ALL users who interact with your application
+
+### 💼 Commercial License — For Startups & Enterprises
+If you want to use this in a **proprietary, closed-source product** (SaaS, mobile app, internal tool, etc.), you **MUST** purchase a commercial license.
+
+| Tier | Price | Use Case |
+|:-----|:------|:---------|
+| Indie | $499/year | Solo developers, <$100K revenue |
+| Startup | $2,999/year | Teams up to 25, <$5M revenue |
+| Enterprise | $14,999/year | Unlimited seats, unlimited revenue |
+| OEM / White-Label | Custom pricing | Embedding in your product |
+
+### 📬 Contact for Licensing
+
+**Soumya Debnath** — Creator & Maintainer
+
+- 📧 Email: [soumyadebnath1661@gmail.com](mailto:soumyadebnath1661@gmail.com)
+- 📞 Phone / WhatsApp: [+91 7031648617](tel:+917031648617)
+- 🐙 GitHub: [github.com/itsoumya-d](https://github.com/itsoumya-d)
+
