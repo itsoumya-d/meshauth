@@ -1,0 +1,4 @@
+node_modules/
+dist/
+server/meshauth-server
+server/meshauth.db

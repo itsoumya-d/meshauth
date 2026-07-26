@@ -1,0 +1,24 @@
+{
+  "name": "meshauth",
+  "version": "1.0.0",
+  "description": "Passwordless authentication SDK using WebAuthn/Passkeys",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0"
+  },
+  "keywords": [
+    "webauthn",
+    "passkeys",
+    "passwordless",
+    "auth"
+  ],
+  "author": "Soumya Debnath",
+  "license": "AGPL-3.0"
+}
