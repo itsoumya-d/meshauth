@@ -134,16 +134,8 @@ export class MeshAuth {
           return { success: false, error: "Credential not found locally" };
         }
         
-        // Generate a per-device random signing key (stored in memory for this session)
-        // In production, this should be persisted in IndexedDB for cross-session consistency
-        const keyMaterial = crypto.getRandomValues(new Uint8Array(32));
-        const key = await crypto.subtle.importKey(
-          'raw',
-          keyMaterial,
-          { name: 'HMAC', hash: 'SHA-256' },
-          false,
-          ['sign']
-        );
+        // Retrieve or create a persisted signing key from IndexedDB
+        const key = await this.getOrCreateSigningKey();
         const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
         const payload = btoa(JSON.stringify({ sub: found.username, iat: Math.floor(Date.now() / 1000), exp: Math.floor(Date.now() / 1000) + 3600 })).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
         const signatureBuffer = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(`${header}.${payload}`));
@@ -176,5 +168,58 @@ export class MeshAuth {
 
   async removeCredential(credentialId: string): Promise<void> {
     return this.store.removeCredential(credentialId);
+  }
+
+  /**
+   * Get or create a persistent HMAC signing key stored in IndexedDB.
+   * This ensures JWT tokens signed locally can be verified across sessions.
+   */
+  private async getOrCreateSigningKey(): Promise<CryptoKey> {
+    const DB_NAME = 'MeshAuthKeyDB';
+    const STORE_NAME = 'signing_keys';
+    const KEY_ID = 'primary_hmac';
+
+    const db = await new Promise<IDBDatabase>((resolve, reject) => {
+      const req = indexedDB.open(DB_NAME, 1);
+      req.onupgradeneeded = () => {
+        const db = req.result;
+        if (!db.objectStoreNames.contains(STORE_NAME)) {
+          db.createObjectStore(STORE_NAME, { keyPath: 'id' });
+        }
+      };
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+
+    // Try to retrieve existing key
+    const existing = await new Promise<any>((resolve, reject) => {
+      const tx = db.transaction(STORE_NAME, 'readonly');
+      const store = tx.objectStore(STORE_NAME);
+      const req = store.get(KEY_ID);
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+
+    if (existing && existing.keyMaterial) {
+      return crypto.subtle.importKey(
+        'raw', existing.keyMaterial,
+        { name: 'HMAC', hash: 'SHA-256' }, false, ['sign', 'verify']
+      );
+    }
+
+    // Generate and persist a new key
+    const keyMaterial = crypto.getRandomValues(new Uint8Array(32));
+    await new Promise<void>((resolve, reject) => {
+      const tx = db.transaction(STORE_NAME, 'readwrite');
+      const store = tx.objectStore(STORE_NAME);
+      store.put({ id: KEY_ID, keyMaterial: keyMaterial.buffer });
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+
+    return crypto.subtle.importKey(
+      'raw', keyMaterial,
+      { name: 'HMAC', hash: 'SHA-256' }, false, ['sign', 'verify']
+    );
   }
 }
