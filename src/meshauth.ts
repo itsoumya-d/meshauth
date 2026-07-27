@@ -1,5 +1,5 @@
-import { LicenseValidator } from "./license-validator";
 // Copyright (c) 2024-2026 Soumya Debnath. All Rights Reserved.
+import { LicenseValidator } from "./license-validator";
 // Licensed under the Business Source License 1.1 (BSL 1.1).
 // See LICENSE file for details. Production use requires a paid license.
 // Contact: soumyadebnath1661@gmail.com | +91 7031648617
@@ -31,6 +31,7 @@ export class MeshAuth {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, displayName })
       });
+      if (!beginRes.ok) throw new Error(`Registration begin failed: ${beginRes.status} ${beginRes.statusText}`);
       const beginData = await beginRes.json();
       
       const serverOptions = beginData.publicKey;
@@ -61,8 +62,9 @@ export class MeshAuth {
           }
         })
       });
+      if (!completeRes.ok) throw new Error(`Registration complete failed: ${completeRes.status} ${completeRes.statusText}`);
       const completeData = await completeRes.json();
-      if (!completeData.success) throw new Error("Registration failed on server");
+      if (!completeData.success) throw new Error('Registration failed on server');
     } else {
       credential = await this.client.createCredential(username, displayName);
       await this.store.saveCredential({
@@ -83,6 +85,7 @@ export class MeshAuth {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ username })
         });
+        if (!beginRes.ok) throw new Error(`Auth begin failed: ${beginRes.status} ${beginRes.statusText}`);
         const beginData = await beginRes.json();
         
         const serverOptions = beginData.publicKey;
@@ -114,6 +117,7 @@ export class MeshAuth {
             }
           })
         });
+        if (!completeRes.ok) throw new Error(`Auth complete failed: ${completeRes.status} ${completeRes.statusText}`);
         const completeData = await completeRes.json();
         if (completeData.success && completeData.token) {
           TokenManager.saveToken(completeData.token);
@@ -130,7 +134,9 @@ export class MeshAuth {
           return { success: false, error: "Credential not found locally" };
         }
         
-        const keyMaterial = new TextEncoder().encode('local_serverless_secret_key_12345');
+        // Generate a per-device random signing key (stored in memory for this session)
+        // In production, this should be persisted in IndexedDB for cross-session consistency
+        const keyMaterial = crypto.getRandomValues(new Uint8Array(32));
         const key = await crypto.subtle.importKey(
           'raw',
           keyMaterial,
@@ -139,7 +145,7 @@ export class MeshAuth {
           ['sign']
         );
         const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
-        const payload = btoa(JSON.stringify({ sub: found.username, exp: Math.floor(Date.now() / 1000) + 3600 })).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+        const payload = btoa(JSON.stringify({ sub: found.username, iat: Math.floor(Date.now() / 1000), exp: Math.floor(Date.now() / 1000) + 3600 })).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
         const signatureBuffer = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(`${header}.${payload}`));
         const signature = bufferToBase64URL(signatureBuffer);
         const token = `${header}.${payload}.${signature}`;
