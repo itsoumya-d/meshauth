@@ -15,4 +15,22 @@ export class TokenManager {
   static clearToken() {
     sessionStorage.removeItem('meshauth_token');
   }
+
+  static getPayload(token: string): any {
+    try {
+      const parts = token.split('.');
+      if (parts.length !== 3) return null;
+      const payload = parts[1];
+      const decoded = atob(payload.replace(/-/g, '+').replace(/_/g, '/'));
+      return JSON.parse(decoded);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  static isExpired(token: string): boolean {
+    const payload = this.getPayload(token);
+    if (!payload || !payload.exp) return true;
+    return payload.exp * 1000 < Date.now();
+  }
 }

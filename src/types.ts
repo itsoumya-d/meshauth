@@ -8,6 +8,8 @@ export interface MeshAuthOptions {
   rpId: string;
   origin: string;
   serverUrl?: string;
+  conditionalMediation?: boolean;
+  authenticatorAttachment?: 'platform' | 'cross-platform';
 }
 
 export interface StoredCredential {
@@ -20,4 +22,15 @@ export interface AuthResult {
   success: boolean;
   token?: string;
   error?: string;
+}
+
+export interface RegistrationResponse {
+  success: boolean;
+  [key: string]: any;
+}
+
+export interface AuthenticationResponse {
+  success: boolean;
+  token?: string;
+  [key: string]: any;
 }

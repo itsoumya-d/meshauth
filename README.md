@@ -1,3 +1,10 @@
+<!--
+// Copyright (c) 2024-2026 Soumya Debnath. All Rights Reserved.
+// Licensed under the Business Source License 1.1 (BSL 1.1).
+// See LICENSE file for details. Production use requires a paid license.
+// Contact: soumyadebnath1661@gmail.com | +91 7031648617
+-->
+
 # MeshAuth
 
 <div align="center">
@@ -33,6 +40,42 @@ MeshAuth is an open-source, passwordless authentication library and server suite
 - **Phishing-Proof:** Enforces origin-bound keys (anti-phishing).
 - **Anti-Replay:** Challenge-response implementation protects against replay attacks.
 - **Zero Dependencies:** Ultra-lightweight core (under 5kb gzipped).
+
+---
+
+## 🔬 Next-Gen WebAuthn L3 & Serverless Features
+
+MeshAuth implements the absolute latest authentication standards and cryptography to give you both cloudless independence and full enterprise server capability.
+
+### 🔑 WebAuthn L3 Conditional UI (Passkeys in Autofill)
+- **Autofill Passkeys**: Native browser credential autofill support (`mediation: 'conditional'`). Users see available passkeys directly inside standard HTML inputs (`autocomplete="username webauthn"`), completing passwordless logins in a single click without disruptive popup modals.
+
+### ⚡ Serverless Mode (Zero-Backend Client Authentication)
+- **Client-Only HMAC-SHA256**: Authenticate users completely serverless in static or offline applications using the native browser WebCrypto API (`crypto.subtle`). Secure key derivation and local session token validation require zero server infrastructure.
+
+### 🏢 Real Server Integration (Go Backend)
+- **Full Challenge/Response Protocol**: End-to-end WebAuthn registration and authentication challenge cycle backed by the native Go server (`server/auth.go`). Verifies attestation/assertion objects, P-256 signatures, and signature counters against stored public keys.
+
+### 🔬 Research Foundation & Standards
+> **Research Standard:**  
+> W3C Recommendation (2023): *Web Authentication: An API for accessing Public Key Credentials Level 3 (WebAuthn L3)*. W3C FIDO Alliance Standard. [w3.org/TR/webauthn-3/](https://www.w3.org/TR/webauthn-3/)
+
+### 💻 Usage Example: Conditional UI & Serverless Mode
+
+```typescript
+import { MeshAuth } from 'meshauth';
+
+// 1. Serverless Mode Initialization
+const auth = new MeshAuth({
+  rpName: "My Offline App",
+  mode: "serverless" // Uses WebCrypto HMAC-SHA256
+});
+
+// 2. WebAuthn L3 Conditional UI (Passkey Autofill)
+await auth.authenticate({
+  conditional: true // Listens for input autofill selection
+});
+```
 
 ---
 

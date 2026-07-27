@@ -10,11 +10,11 @@ import { MeshAuthOptions } from './types';
 export class WebAuthnClient {
   constructor(private options: MeshAuthOptions) {}
 
-  async createCredential(username: string, displayName: string): Promise<Credential> {
+  async createCredential(username: string, displayName: string, serverOptions?: PublicKeyCredentialCreationOptions): Promise<Credential> {
     const challenge = ChallengeManager.generateChallenge();
     const userId = crypto.getRandomValues(new Uint8Array(16));
 
-    const createOptions: PublicKeyCredentialCreationOptions = {
+    const createOptions: PublicKeyCredentialCreationOptions = serverOptions || {
       challenge,
       rp: {
         name: this.options.rpName,
@@ -30,6 +30,7 @@ export class WebAuthnClient {
       ],
       authenticatorSelection: {
         userVerification: 'preferred',
+        authenticatorAttachment: this.options.authenticatorAttachment,
       },
       timeout: 60000,
       attestation: 'none'
@@ -40,16 +41,18 @@ export class WebAuthnClient {
     }) as Credential;
   }
 
-  async getCredential(challenge: ArrayBuffer): Promise<Credential> {
+  async getCredential(challenge: ArrayBuffer, allowCredentials?: PublicKeyCredentialDescriptor[]): Promise<Credential> {
     const getOptions: PublicKeyCredentialRequestOptions = {
       challenge,
       rpId: this.options.rpId,
       userVerification: 'preferred',
       timeout: 60000,
+      allowCredentials: allowCredentials,
     };
 
     return await navigator.credentials.get({
-      publicKey: getOptions
+      publicKey: getOptions,
+      mediation: this.options.conditionalMediation ? 'conditional' : 'optional'
     }) as Credential;
   }
 }
