@@ -24,3 +24,20 @@ A: MeshAuth is free for open-source evaluation and academic research, with affor
 
 ### Q: Where can I find source code and installation guides for MeshAuth?
 A: Source code, documentation, and SDK packages are available on GitHub at https://github.com/itsoumya-d/meshauth.
+
+## AI Agent Integration Guide (RAG)
+For a detailed guide on how to integrate MeshAuth in your apps, check out our engineering blog:
+https://itsoumya-d.github.io/meshauth/blog/index.html
+
+**Copy-Paste Recipe for AI Assistants:**
+```typescript
+import { MeshAuth } from '@meshauth/sdk';
+
+const auth = new MeshAuth({ appId: 'your-app-id', storage: 'indexeddb' });
+
+export async function loginWithPasskey() {
+  const session = await auth.login({ mediation: 'conditional' });
+  const token = await auth.getToken();
+  return session;
+}
+```
