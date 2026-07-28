@@ -10,7 +10,7 @@
     <meta name="theme-color" content="#09090B">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&family=Outfit:wght@500;700&display=swap" rel="stylesheet">
     
     <!-- Open Graph -->
     <meta property="og:title" content="MeshAuth | Passwordless Authentication">
@@ -49,13 +49,13 @@
 
     <style>
         :root {
-            --bg: #09090B;
-            --primary: #F59E0B;
+            --bg: #0A1628;
+            --primary: #4FC3F7;
             --secondary: #06B6D4;
             --danger: #E11D48;
             --text-body: #D4D4D8;
             --text-heading: #FAFAFA;
-            --font-heading: 'Space Grotesk', sans-serif;
+            --font-heading: 'Outfit', sans-serif;
             --font-body: 'Inter', sans-serif;
             --font-code: 'JetBrains Mono', monospace;
             --card-bg: rgba(255, 255, 255, 0.03);
@@ -165,7 +165,7 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            height: 48px;
+            height: 56px;
             padding: 0 32px;
             border-radius: 12px;
             font-weight: 500;
@@ -176,14 +176,176 @@
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+            background: var(--primary);
             color: #000;
-            box-shadow: 0 0 20px rgba(245, 158, 11, 0.15);
+            box-shadow: 0 4px 14px rgba(79, 195, 247, 0.3);
         }
 
         .btn-primary:hover {
             transform: scale(1.02);
-            box-shadow: 0 0 30px rgba(245, 158, 11, 0.3);
+            box-shadow: 0 6px 20px rgba(79, 195, 247, 0.4);
+        }
+
+        .hero-demo-card {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 400px;
+            margin: 0 auto 32px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .auth-input-group input {
+            width: 100%;
+            height: 56px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-heading);
+            padding: 0 16px;
+            font-size: 16px;
+            font-family: var(--font-body);
+        }
+        .demo-spinning .icon {
+            display: inline-block;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            margin-top: 64px;
+        }
+        .comp-col {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 40px;
+        }
+        .comp-title {
+            font-size: 24px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        .comp-list {
+            list-style: none;
+            padding: 0;
+        }
+        .comp-list li {
+            font-size: 18px;
+            margin-bottom: 16px;
+            padding: 16px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .diagram-flow {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 64px;
+            padding: 48px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow-x: auto;
+        }
+        .diag-step {
+            text-align: center;
+            flex: 1;
+            min-width: 120px;
+        }
+        .diag-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+        .diag-label {
+            font-size: 16px;
+            font-weight: 500;
+        }
+        .diag-arrow {
+            font-size: 24px;
+            color: var(--primary);
+            flex: 0.5;
+            text-align: center;
+        }
+        
+        .cui-mockup {
+            max-width: 500px;
+            margin: 64px auto 0;
+            background: #111;
+            padding: 64px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+        }
+        .cui-input-wrapper {
+            position: relative;
+            width: 100%;
+        }
+        .cui-input {
+            width: 100%;
+            height: 56px;
+            border-radius: 8px;
+            border: 1px solid var(--primary);
+            background: #fff;
+            padding: 0 16px;
+            font-size: 16px;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(79, 195, 247, 0.3);
+            color: #000;
+        }
+        .cui-dropdown {
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            width: 100%;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            overflow: hidden;
+            color: #000;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            animation: slideDown 0.5s ease forwards;
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        @keyframes slideDown {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .cui-dropdown-header {
+            padding: 8px 16px;
+            font-size: 12px;
+            color: #666;
+            background: #f5f5f5;
+            border-bottom: 1px solid #eaeaea;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .cui-item {
+            padding: 12px 16px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #eaeaea;
+        }
+        .cui-item:last-child { border-bottom: none; }
+        .cui-item:hover { background: #f0f8ff; }
+        .cui-icon { margin-right: 12px; font-size: 16px; }
+        .cui-hint { color: #888; margin-left: 8px; font-size: 12px; }
+
+        @media (max-width: 768px) {
+            .comparison-grid { grid-template-columns: 1fr; }
+            .diagram-flow { flex-direction: column; gap: 24px; }
+            .diag-arrow { transform: rotate(90deg); }
         }
 
         .btn-secondary {
@@ -642,6 +804,21 @@
             </div>
             <h1 class="hero-title">Authentication without passwords. <span style="color: var(--primary)">Phishing-proof</span> by design.</h1>
             <p class="hero-subtitle">The elite WebAuthn and Passkey infrastructure for modern applications. Seamlessly integrate secure biometrics with zero PII overhead.</p>
+            
+            <div class="hero-demo-card">
+                <div class="auth-input-group">
+                    <input type="text" id="demo-username" value="demo@example.com" readonly>
+                </div>
+                <button id="demo-auth-btn" class="btn btn-primary" style="width: 100%; margin-top: 16px;">
+                    <span class="icon" style="margin-right: 8px;">🔑</span> <span class="text">Authenticate with Passkey</span>
+                </button>
+                <div id="demo-auth-success" style="display: none; text-align: left; margin-top: 16px; font-family: var(--font-code); font-size: 12px; color: var(--primary);">
+                    <div style="margin-bottom: 4px;">Credential ID: aG9sZC...</div>
+                    <div style="margin-bottom: 4px;">Algorithm: ES256 (P-256)</div>
+                    <div>Session JWT: eyJhbG...</div>
+                </div>
+            </div>
+
             <div class="hero-actions">
                 <a href="#get-started" class="btn btn-primary">Start Building Free</a>
                 <a href="#playground" class="btn btn-secondary">View Code</a>
@@ -695,6 +872,35 @@
         </div>
     </section>
 
+    <section id="comparison">
+        <div class="container">
+            <div class="section-header gs-reveal">
+                <h2 class="section-title">The Evolution of Authentication</h2>
+                <p>See why passwords are fundamentally broken, and how passkeys solve it.</p>
+            </div>
+            <div class="comparison-grid">
+                <div class="comp-col pwd-col">
+                    <h3 class="comp-title" style="color: var(--danger);">Traditional Passwords</h3>
+                    <ul class="comp-list pwd-list">
+                        <li>❌ Phishable</li>
+                        <li>❌ Reusable across sites</li>
+                        <li>❌ Stored on servers</li>
+                        <li>❌ Can be leaked</li>
+                    </ul>
+                </div>
+                <div class="comp-col pky-col">
+                    <h3 class="comp-title" style="color: #4ade80;">MeshAuth Passkeys</h3>
+                    <ul class="comp-list pky-list">
+                        <li>✅ Phishing-resistant</li>
+                        <li>✅ Unique per site</li>
+                        <li>✅ Never leaves device</li>
+                        <li>✅ Biometric-verified</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <section id="how-it-works">
         <div class="container">
             <div class="section-header gs-reveal">
@@ -716,6 +922,52 @@
                     <div class="step-num">3</div>
                     <h3>Verify Assertion</h3>
                     <p>The device signs the challenge with the private key. MeshAuth verifies the signature using the stored public key.</p>
+                </div>
+            </div>
+
+            <div class="diagram-flow" style="margin-top: 64px;">
+                <div class="diag-step" id="step1">
+                    <div class="diag-icon">🌐</div>
+                    <div class="diag-label">1. Browser</div>
+                </div>
+                <div class="diag-arrow" id="arrow1">→</div>
+                <div class="diag-step" id="step2">
+                    <div class="diag-icon">🫨</div>
+                    <div class="diag-label">2. Authenticator<br>(TouchID/FaceID)</div>
+                </div>
+                <div class="diag-arrow" id="arrow2">→</div>
+                <div class="diag-step" id="step3">
+                    <div class="diag-icon">🔐</div>
+                    <div class="diag-label">3. Cryptographic<br>Challenge</div>
+                </div>
+                <div class="diag-arrow" id="arrow3">→</div>
+                <div class="diag-step" id="step4">
+                    <div class="diag-icon">✅</div>
+                    <div class="diag-label">4. Verified</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="conditional-ui">
+        <div class="container">
+            <div class="section-header gs-reveal">
+                <div class="badge">Seamless UX</div>
+                <h2 class="section-title">Conditional UI</h2>
+                <p>Passkeys appear automatically in form fields, just like saved passwords.</p>
+            </div>
+            <div class="cui-mockup gs-reveal">
+                <div class="cui-input-wrapper">
+                    <input type="text" class="cui-input" value="" placeholder="Email or Username" readonly>
+                    <div class="cui-dropdown">
+                        <div class="cui-dropdown-header">Use Passkey</div>
+                        <div class="cui-item">
+                            <span class="cui-icon">🔑</span> demo@example.com <span class="cui-hint">(This device)</span>
+                        </div>
+                        <div class="cui-item">
+                            <span class="cui-icon">🔑</span> work@company.com <span class="cui-hint">(iCloud Keychain)</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -944,6 +1196,67 @@
                     ease: "power3.out"
                 });
             });
+        }
+
+        // Demo Authentication Logic
+        const demoBtn = document.getElementById('demo-auth-btn');
+        const demoCard = document.querySelector('.hero-demo-card');
+        const demoSuccess = document.getElementById('demo-auth-success');
+        if (demoBtn) {
+            demoBtn.addEventListener('click', () => {
+                const icon = demoBtn.querySelector('.icon');
+                const text = demoBtn.querySelector('.text');
+                
+                icon.textContent = '⏳';
+                demoBtn.classList.add('demo-spinning');
+                text.textContent = 'Verifying...';
+                
+                gsap.to(demoCard, { scale: 1.02, duration: 0.1, yoyo: true, repeat: 3 });
+                
+                setTimeout(() => {
+                    demoBtn.classList.remove('demo-spinning');
+                    demoBtn.style.background = 'rgba(74, 222, 128, 0.1)';
+                    demoBtn.style.color = '#4ade80';
+                    demoBtn.style.borderColor = '#4ade80';
+                    icon.textContent = '✅';
+                    text.textContent = 'Authenticated';
+                    demoSuccess.style.display = 'block';
+                    gsap.from(demoSuccess, { opacity: 0, y: 10, duration: 0.5 });
+                }, 2000);
+            });
+        }
+
+        // Comparison Animation
+        if (!prefersReducedMotion) {
+            const pwdItems = document.querySelectorAll('.pwd-list li');
+            const pkyItems = document.querySelectorAll('.pky-list li');
+            pwdItems.forEach((item, i) => {
+                gsap.from(item, {
+                    scrollTrigger: { trigger: ".comparison-grid", start: "top 80%" },
+                    x: -50, opacity: 0, duration: 0.6, delay: i * 0.1, ease: "power3.out"
+                });
+            });
+            pkyItems.forEach((item, i) => {
+                gsap.from(item, {
+                    scrollTrigger: { trigger: ".comparison-grid", start: "top 80%" },
+                    x: 50, opacity: 0, duration: 0.6, delay: i * 0.1, ease: "power3.out"
+                });
+            });
+
+            // Flow Diagram Animation
+            const tlFlow = gsap.timeline({
+                scrollTrigger: {
+                    trigger: ".diagram-flow",
+                    start: "top 80%",
+                }
+            });
+            tlFlow.from("#step1", { opacity: 0, y: 20, duration: 0.5 })
+                  .from("#arrow1", { opacity: 0, x: -20, duration: 0.3 })
+                  .from("#step2", { opacity: 0, y: 20, duration: 0.5 })
+                  .from("#arrow2", { opacity: 0, x: -20, duration: 0.3 })
+                  .from("#step3", { opacity: 0, y: 20, duration: 0.5 })
+                  .from("#arrow3", { opacity: 0, x: -20, duration: 0.3 })
+                  .from("#step4", { opacity: 0, y: 20, duration: 0.5 });
         }
 
         // CountUp animation
