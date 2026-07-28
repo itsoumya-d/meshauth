@@ -1,0 +1,196 @@
+// Lottie JSON Generator for MeshAuth Biometric Passkey Animation
+// Standard Lottie format (v5.7.0) with animated shape layers
+
+const fs = require('fs');
+const path = require('path');
+
+const lottieAnimation = {
+  v: "5.7.0",
+  fr: 60,
+  ip: 0,
+  op: 180,
+  w: 800,
+  h: 600,
+  nm: "MeshAuth Biometric Passkey",
+  ddd: 0,
+  assets: [],
+  layers: [
+    // 1. FOREGROUND: Checkmark Badge (Appears at frame 60)
+    {
+      ddd: 0,
+      ind: 1,
+      ty: 4,
+      nm: "Success Checkmark",
+      sr: 1,
+      ks: {
+        o: {
+          a: 1,
+          k: [
+            { t: 0, s: [0], e: [0] },
+            { t: 60, s: [0], e: [100] },
+            { t: 90, s: [100], e: [100] },
+            { t: 180, s: [100], e: [0] }
+          ]
+        },
+        r: { a: 0, k: 0 },
+        p: { a: 0, k: [400, 300, 0] },
+        a: { a: 0, k: [0, 0, 0] },
+        s: {
+          a: 1,
+          k: [
+            { t: 60, s: [0, 0, 100], e: [120, 120, 100] },
+            { t: 75, s: [120, 120, 100], e: [100, 100, 100] },
+            { t: 180, s: [100, 100, 100], e: [100, 100, 100] }
+          ]
+        }
+      },
+      ao: 0,
+      shapes: [
+        {
+          ty: "gr",
+          it: [
+            {
+              ty: "sh",
+              ks: {
+                a: 0,
+                k: {
+                  c: false,
+                  i: [[0,0], [0,0], [0,0]],
+                  o: [[0,0], [0,0], [0,0]],
+                  v: [[-20, 0], [-5, 15], [25, -15]]
+                }
+              }
+            },
+            {
+              ty: "st",
+              c: { a: 0, k: [0, 0.96, 0.63, 1] }, // #00F5A0 Emerald
+              w: { a: 0, k: 6 },
+              lc: 2,
+              lj: 2
+            },
+            {
+              ty: "tr",
+              p: { a: 0, k: [0, 0] },
+              a: { a: 0, k: [0, 0] },
+              s: { a: 0, k: [100, 100] },
+              r: { a: 0, k: 0 },
+              o: { a: 0, k: 100 }
+            }
+          ]
+        }
+      ]
+    },
+    // 2. MIDDLEGROUND: Fingerprint Waves (Animated pulse)
+    {
+      ddd: 0,
+      ind: 2,
+      ty: 4,
+      nm: "Fingerprint Pulse Wave 1",
+      sr: 1,
+      ks: {
+        o: {
+          a: 1,
+          k: [
+            { t: 0, s: [30], e: [100] },
+            { t: 90, s: [100], e: [30] },
+            { t: 180, s: [30], e: [30] }
+          ]
+        },
+        r: { a: 0, k: 0 },
+        p: { a: 0, k: [400, 300, 0] },
+        a: { a: 0, k: [0, 0, 0] },
+        s: {
+          a: 1,
+          k: [
+            { t: 0, s: [80, 80, 100], e: [110, 110, 100] },
+            { t: 90, s: [110, 110, 100], e: [80, 80, 100] },
+            { t: 180, s: [80, 80, 100], e: [80, 80, 100] }
+          ]
+        }
+      },
+      ao: 0,
+      shapes: [
+        {
+          ty: "el",
+          p: { a: 0, k: [0, 0] },
+          s: { a: 0, k: [160, 160] }
+        },
+        {
+          ty: "st",
+          c: { a: 0, k: [0, 0.9, 1, 1] }, // #00E5FF Cyan
+          w: { a: 0, k: 3 },
+          lc: 2
+        },
+        {
+          ty: "tr",
+          p: { a: 0, k: [0, 0] },
+          a: { a: 0, k: [0, 0] },
+          s: { a: 0, k: [100, 100] },
+          r: { a: 0, k: 0 },
+          o: { a: 0, k: 100 }
+        }
+      ]
+    },
+    // 3. BACKGROUND: Shield Container (Dark navy glass border)
+    {
+      ddd: 0,
+      ind: 3,
+      ty: 4,
+      nm: "Shield Card Background",
+      sr: 1,
+      ks: {
+        o: { a: 0, k: 100 },
+        r: { a: 0, k: 0 },
+        p: { a: 0, k: [400, 300, 0] },
+        a: { a: 0, k: [0, 0, 0] },
+        s: { a: 0, k: [100, 100, 100] }
+      },
+      ao: 0,
+      shapes: [
+        {
+          ty: "gr",
+          it: [
+            {
+              ty: "sr",
+              sy: 1,
+              p: { a: 0, k: [0, 0] },
+              r: { a: 0, k: 140 },
+              ir: { a: 0, k: 0 },
+              is: { a: 0, k: 0 },
+              or: { a: 0, k: 180 },
+              os: { a: 0, k: 20 },
+              pt: { a: 0, k: 5 }
+            },
+            {
+              ty: "fl",
+              c: { a: 0, k: [0.04, 0.09, 0.16, 0.95] } // Deep navy #0A1628
+            },
+            {
+              ty: "st",
+              c: { a: 0, k: [0.31, 0.76, 0.97, 0.8] }, // Muted cyan #4FC3F7
+              w: { a: 0, k: 4 }
+            },
+            {
+              ty: "tr",
+              p: { a: 0, k: [0, 0] },
+              a: { a: 0, k: [0, 0] },
+              s: { a: 0, k: [100, 100] },
+              r: { a: 0, k: 0 },
+              o: { a: 0, k: 100 }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+};
+
+const outputDir = path.join(__dirname, '../blog');
+if (!fs.existsSync(outputDir)) {
+  fs.mkdirSync(outputDir, { recursive: true });
+}
+
+const outputPath = path.join(outputDir, 'meshauth-animation.json');
+fs.writeFileSync(outputPath, JSON.stringify(lottieAnimation, null, 2));
+
+console.log('✅ Generated Lottie JSON animation at:', outputPath);
