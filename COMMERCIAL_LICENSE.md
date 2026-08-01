@@ -1,5 +1,18 @@
 # Commercial License — MeshAuth
 
+> ### ⚠️ You probably do not need this licence
+>
+> As of the relicensing, this software is available under **AGPL-3.0-or-later** free of charge for
+> any purpose, including commercial and production use. You do **not** need to pay, ask permission,
+> or obtain a key.
+>
+> A commercial licence buys exactly one thing: **an exception to the AGPL's requirement that you
+> publish your modifications** if you run a modified version as a network service. If you are happy
+> to comply with the AGPL — or you are not modifying the source — the free option is the right one.
+
+---
+
+
 > Replaces: Auth0 ($240/mo at 500 MAU, custom enterprise), Okta ($2-$15/user/month), Clerk ($25/mo+).
 > MeshAuth uses WebAuthn/Passkeys — no passwords, no cookies, phishing-proof.
 
