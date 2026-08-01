@@ -10,346 +10,188 @@
 <div align="center">
   <h3>Zero-Cost, Passwordless Authentication Infrastructure</h3>
   <p>Replace Auth0, Okta, and Firebase Auth with standard WebAuthn/FIDO2. Stop paying per-user for authentication.</p>
+
+  [![License: BSL 1.1](https://img.shields.io/badge/License-BSL_1.1-red.svg)](https://mariadb.com/bsl11/)
+  [![Status](https://img.shields.io/badge/status-pre--release-orange.svg)]()
 </div>
 
 ---
 
-## 🛑 Why Passwords are Obsolete
+> **Pre-release software. Not published to npm. No production adopters yet. See [Known Limitations](#known-limitations).**
 
-The era of passwords is over. Passwords are inherently flawed:
-1. **Security Vulnerabilities:** Over 80% of data breaches are caused by weak, reused, or stolen passwords. Phishing remains the #1 attack vector globally.
-2. **Poor User Experience:** Users hate creating, remembering, and resetting passwords. Password resets cost organizations an average of $70 per request in support overhead.
-3. **The "Shared Secret" Problem:** Passwords require both the user and the server to know (or hash) the same secret. If a server is breached, the hashes are stolen, eventually cracked, and reused across other services.
+---
 
-### Enter Passkeys and WebAuthn
+## What is MeshAuth?
 
-MeshAuth leverages **WebAuthn (Web Authentication)** and **FIDO2**, standardizing public-key cryptography for the web. Instead of shared secrets, MeshAuth uses a **Challenge-Response** mechanism:
-- A unique keypair is generated for your service.
-- The **Public Key** is stored on your server.
-- The **Private Key** remains securely enclaved in the user's authenticator (e.g., Face ID, Touch ID, Windows Hello, YubiKey).
-- The Private Key NEVER leaves the device. Phishing becomes mathematically impossible because there is no secret to steal or intercept.
+MeshAuth is a TypeScript library and Go server suite that provides end-to-end passkey (WebAuthn) infrastructure. It lets you add passwordless biometric authentication to any web application using the browser's built-in `navigator.credentials` API — no cloud identity provider required.
 
-## 🌟 What is MeshAuth?
-
-MeshAuth is an open-source, passwordless authentication library and server suite that provides end-to-end passkey infrastructure. It allows you to drop-in passwordless authentication into any web application in minutes, completely replacing expensive enterprise identity providers like Auth0, Okta, Clerk, or Stytch.
+Real exported symbols: `MeshAuth`, `EventEmitter`. Nothing is published under `@meshauth/sdk`.
 
 ### Key Features
-- **$0 per MAU:** Self-hosted or statically deployed, you pay nothing per user.
-- **Biometric Ready:** Out-of-the-box support for FaceID, TouchID, Android Fingerprint, and Windows Hello.
-- **Cross-Platform:** Support for hardware security keys (YubiKey, Google Titan).
-- **Phishing-Proof:** Enforces origin-bound keys (anti-phishing).
-- **Anti-Replay:** Challenge-response implementation protects against replay attacks.
-- **Zero Dependencies:** Ultra-lightweight core (under 5kb gzipped).
+- Biometric authentication via WebAuthn/FIDO2 (FaceID, TouchID, Windows Hello, hardware keys)
+- Serverless mode using browser WebCrypto HMAC-SHA256 for local session tokens
+- Full challenge/response server mode with the included Go backend
+- Conditional UI (passkey autofill) support via `mediation: 'conditional'`
+- Zero third-party dependencies in the core SDK
 
 ---
 
-## 🔬 Next-Gen WebAuthn L3 & Serverless Features
+## Installation
 
-MeshAuth implements the absolute latest authentication standards and cryptography to give you both cloudless independence and full enterprise server capability.
+MeshAuth is **not published on npm**. Install from source:
 
-### 🔑 WebAuthn L3 Conditional UI (Passkeys in Autofill)
-- **Autofill Passkeys**: Native browser credential autofill support (`mediation: 'conditional'`). Users see available passkeys directly inside standard HTML inputs (`autocomplete="username webauthn"`), completing passwordless logins in a single click without disruptive popup modals.
+**Option 1 — jsDelivr CDN (no build step):**
+```html
+<script type="module">
+  import { MeshAuth } from 'https://cdn.jsdelivr.net/gh/itsoumya-d/meshauth@main/dist/index.mjs';
+</script>
+```
 
-### ⚡ Serverless Mode (Zero-Backend Client Authentication)
-- **Client-Only HMAC-SHA256**: Authenticate users completely serverless in static or offline applications using the native browser WebCrypto API (`crypto.subtle`). Secure key derivation and local session token validation require zero server infrastructure.
+**Option 2 — Clone and build:**
+```bash
+git clone https://github.com/itsoumya-d/meshauth.git
+cd meshauth
+npm install
+npm run build
+```
+Then import from `./dist/index.mjs` or `./dist/index.js`.
 
-### 🏢 Real Server Integration (Go Backend)
-- **Full Challenge/Response Protocol**: End-to-end WebAuthn registration and authentication challenge cycle backed by the native Go server (`server/auth.go`). Verifies attestation/assertion objects, P-256 signatures, and signature counters against stored public keys.
+---
 
-### 🔬 Research Foundation & Standards
-> **Research Standard:**  
-> W3C Recommendation (2023): *Web Authentication: An API for accessing Public Key Credentials Level 3 (WebAuthn L3)*. W3C FIDO Alliance Standard. [w3.org/TR/webauthn-3/](https://www.w3.org/TR/webauthn-3/)
-
-### 💻 Usage Example: Conditional UI & Serverless Mode
+## Quick Start
 
 ```typescript
-import { MeshAuth } from 'meshauth';
+import { MeshAuth } from './dist/index.mjs';
 
-// 1. Serverless Mode Initialization
+// 1. Check platform support before attempting any WebAuthn flow
+if (!MeshAuth.isSupported()) {
+  // window.PublicKeyCredential is absent — WebAuthn is unavailable.
+  // Show a fallback UI (magic link, password, etc.).
+  showFallbackLogin();
+  return;
+}
+
 const auth = new MeshAuth({
-  rpName: "My Offline App",
-  mode: "serverless" // Uses WebCrypto HMAC-SHA256
+  rpName: 'My App',
+  rpId: window.location.hostname,
+  origin: window.location.origin,
 });
 
-// 2. WebAuthn L3 Conditional UI (Passkey Autofill)
-await auth.authenticate({
-  conditional: true // Listens for input autofill selection
-});
+// 2. Register a new passkey
+try {
+  await auth.register('user@example.com', 'Jane Doe');
+} catch (err) {
+  // navigator.credentials.create() throws if the user cancels,
+  // the device has no authenticator, or the site is not on HTTPS.
+  console.error('Registration failed:', err.message);
+}
+
+// 3. Authenticate
+const result = await auth.authenticate('user@example.com');
+if (result.success) {
+  console.log('Token:', result.token);
+} else {
+  console.warn('Auth failed:', result.error);
+}
 ```
 
 ---
 
-## ⚔️ Comparison: MeshAuth vs. Competitors
+## API Reference
 
-| Feature | MeshAuth | Auth0 | Okta | Clerk | Firebase Auth | Supertokens |
-|---------|----------|-------|------|-------|---------------|-------------|
-| **Cost for 100k MAUs** | **$0** | ~$1,000/mo | Enterprise | ~$2,000/mo | Variable | Variable |
-| **Authentication Model** | Passkey-First | Password-First | Password-First| Password/OTP | Password/OTP | Password-First |
-| **Phishing Resistance** | 100% (WebAuthn) | Optional MFA | Optional MFA | Optional | Optional | Optional |
-| **Data Ownership** | **Yours** | Vendor | Vendor | Vendor | Google | Self/Vendor |
-| **Vendor Lock-in** | **None** | High | High | High | High | Medium |
-| **Setup Time** | < 10 mins | Days | Weeks | Minutes | Minutes | Minutes |
+### `MeshAuth` Class
 
----
+#### `constructor(options?: MeshAuthOptions)`
+Options: `rpName` (string), `rpId` (string), `origin` (string), `serverUrl?` (string), `authenticatorAttachment?` (`'platform' | 'cross-platform'`), `conditionalMediation?` (boolean).
 
-## 🏗️ Authentication Flow Architecture
+#### `static isSupported(): boolean`
+Returns `true` if `window.PublicKeyCredential` exists. Call this before any WebAuthn flow. Returns `false` in Node.js and non-supporting browsers.
 
-MeshAuth uses a secure, two-step process for both registration and authentication.
+#### `static async isConditionalMediationAvailable(): Promise<boolean>`
+Returns `true` if the browser supports passkey autofill (`mediation: 'conditional'`).
 
-### 1. Registration Flow
-```mermaid
-sequenceDiagram
-    participant User
-    participant Browser
-    participant MeshAuth Server
-    
-    User->>Browser: Enters Username & Clicks Register
-    Browser->>MeshAuth Server: POST /register/begin
-    MeshAuth Server-->>Browser: Returns Cryptographic Challenge & UserID
-    Browser->>User: Prompts Biometrics (FaceID/TouchID)
-    User-->>Browser: Authorizes
-    Browser->>Browser: Generates ECDSA P-256 Keypair
-    Browser->>MeshAuth Server: POST /register/complete (Public Key + Signed Challenge)
-    MeshAuth Server->>MeshAuth Server: Validates Signature & Stores Public Key
-    MeshAuth Server-->>Browser: Registration Success
-```
+#### `async register(username: string, displayName: string): Promise<Credential>`
+Triggers the WebAuthn registration ceremony. Requires a browser with `navigator.credentials`. Throws on failure (user cancelled, no authenticator, non-HTTPS origin, etc.).
 
-### 2. Authentication Flow
-```mermaid
-sequenceDiagram
-    participant User
-    participant Browser
-    participant MeshAuth Server
-    
-    User->>Browser: Clicks "Sign In"
-    Browser->>MeshAuth Server: POST /auth/begin
-    MeshAuth Server-->>Browser: Returns Cryptographic Challenge
-    Browser->>User: Prompts Biometrics (FaceID/TouchID)
-    User-->>Browser: Authorizes
-    Browser->>Browser: Signs Challenge with Private Key
-    Browser->>MeshAuth Server: POST /auth/complete (Signature + Credential ID)
-    MeshAuth Server->>MeshAuth Server: Retrieves Public Key & Verifies Signature
-    MeshAuth Server-->>Browser: Returns JWT Access Token
-```
+#### `async authenticate(username?: string): Promise<AuthResult>`
+Triggers the WebAuthn authentication ceremony. Returns `{ success: true, token }` or `{ success: false, error }`.
+
+#### `async getCredentials(): Promise<StoredCredential[]>`
+Returns locally cached credentials from IndexedDB.
+
+#### `async removeCredential(credentialId: string): Promise<void>`
+Removes a credential from local IndexedDB cache.
 
 ---
 
-## 🛡️ Security Model
+## Known Limitations
 
-MeshAuth is built on a robust security foundation adhering to FIDO2 standards:
-
-1. **ECDSA P-256:** Uses Elliptic Curve Digital Signature Algorithm (P-256 curve) for strong, fast cryptography.
-2. **Anti-Replay via Challenge-Response:** Every transaction involves a securely generated random challenge (`crypto.getRandomValues`) that must be signed. Reusing a previous signature will fail.
-3. **Origin Binding:** WebAuthn ties the credential to the specific domain (Relying Party ID). A passkey created for `yourdomain.com` cannot be phished by `evil-domain.com`.
-4. **No Shared Secrets:** Servers only store public keys, rendering database breaches useless to attackers.
+- **Pre-release, no npm package.** `npm install meshauth` will not install this library (the name may be taken by an unrelated package). Use jsDelivr or clone from source.
+- **Requires a real browser.** `navigator.credentials`, `window.PublicKeyCredential`, and IndexedDB are browser-only. None of these exist in Node.js. `MeshAuth.isSupported()` returns `false` in Node.
+- **Requires HTTPS.** WebAuthn is disabled on non-HTTPS origins, except `localhost`. The library will throw if `navigator.credentials.create()` or `.get()` is called on HTTP.
+- **No platform authenticator = no passkeys.** If the device has no biometric sensor and no hardware security key, `register()` and `authenticate()` will throw with a user-facing error from the browser. The library propagates this error — there is no silent fallback. Callers must implement their own fallback (magic link, password, etc.).
+- **Serverless mode token security.** In serverless mode (no `serverUrl`), JWT tokens are signed with an HMAC key stored in IndexedDB. These tokens are not verifiable by any server. They are suitable for local session state only.
+- **IndexedDB not available in all contexts.** Private browsing mode in some browsers disables IndexedDB. `getCredentials()` and `saveCredential()` will throw in those contexts.
+- **No production adopters yet.** This is a proof-of-concept SDK. APIs may change without notice.
 
 ---
 
-## 📦 Installation & Setup
+## WebAuthn Degradation Behavior
 
-### 1. Install Client SDK
+| Environment | `isSupported()` | `register()` / `authenticate()` |
+|---|---|---|
+| Chrome/Safari/Firefox on HTTPS with authenticator | `true` | Works normally |
+| Non-HTTPS origin (except localhost) | `true` (API exists) | Browser throws `NotAllowedError` |
+| No biometric sensor / no security key | `true` | Browser throws `NotAllowedError` or `InvalidStateError` |
+| Node.js | `false` | `authenticate()` returns `{success:false,error:...}` |
+| Browser without WebAuthn support | `false` | Call blocked — check `isSupported()` first |
 
-```bash
-npm install meshauth
-```
+The library surfaces all browser errors through its catch blocks. `authenticate()` always returns an `AuthResult` rather than throwing. `register()` propagates errors.
 
-### 2. Go Server Setup (Optional but recommended)
+---
 
-MeshAuth provides a lightweight Go backend out of the box.
+## Comparison: MeshAuth vs. Competitors
+
+| Feature | MeshAuth | Auth0 | Okta | Clerk |
+|---|---|---|---|---|
+| Cost for 100k MAUs | $0 (self-hosted) | ~$1,000/mo | Enterprise | ~$2,000/mo |
+| Authentication Model | Passkey-First | Password-First | Password-First | Password/OTP |
+| Phishing Resistance | 100% (WebAuthn) | Optional MFA | Optional MFA | Optional |
+| Data Ownership | Yours | Vendor | Vendor | Vendor |
+| npm availability | Not published | Published | N/A | Published |
+| Production-ready | Pre-release | Yes | Yes | Yes |
+
+---
+
+## Go Server (Optional)
+
+An included Go backend handles challenge/response for production deployments:
 
 ```bash
 cd server
 go run main.go auth.go store.go types.go
+# Runs on http://localhost:8080
 ```
-The server will run on `http://localhost:8080`.
+
+Pass `serverUrl: 'http://localhost:8080'` to `MeshAuth` options to use it.
+
+**CRITICAL:** WebAuthn requires HTTPS in production. The Go server must be deployed behind a TLS-terminating proxy (Nginx, Caddy, etc.).
 
 ---
 
-## 🚀 Usage Examples
+## License — Business Source License 1.1
 
-### Initialization
-
-```typescript
-import { MeshAuth } from 'meshauth';
-
-const auth = new MeshAuth({
-  rpName: "My Awesome App",
-  rpId: window.location.hostname, // Must match your domain
-  serverUrl: "https://api.yourdomain.com", // Optional: Custom backend
-});
-```
-
-### 1. Checking WebAuthn Support
-
-Before attempting passkey flows, ensure the device supports them.
-
-```typescript
-if (MeshAuth.isSupported()) {
-  console.log("Device supports Passkeys!");
-} else {
-  console.warn("Passkeys are not supported on this device/browser.");
-  // Fallback to Magic Links if necessary
-}
-```
-
-### 2. Registering a New User (Sign Up)
-
-```typescript
-async function signUp(username: string, fullName: string) {
-  try {
-    const credential = await auth.register(username, fullName);
-    console.log("Successfully registered! Credential ID:", credential.id);
-    
-    // Redirect to dashboard
-    window.location.href = '/dashboard';
-  } catch (error) {
-    console.error("Registration failed:", error.message);
-  }
-}
-
-// Usage
-signUp("user@example.com", "John Doe");
-```
-
-### 3. Authenticating an Existing User (Sign In)
-
-```typescript
-async function signIn(username?: string) {
-  try {
-    // If username is omitted, the browser will prompt for discoverable credentials (Passkeys)
-    const result = await auth.authenticate(username);
-    
-    if (result.success) {
-      console.log("Signed in successfully! Token:", result.token);
-      // Store token, redirect to dashboard
-    } else {
-      console.error("Authentication failed:", result.error);
-    }
-  } catch (error) {
-    console.error("Unexpected error during sign in:", error);
-  }
-}
-
-// Usage
-signIn("user@example.com");
-```
-
-### 4. Managing Multiple Devices
-
-MeshAuth allows users to register multiple devices (e.g., iPhone, MacBook, Windows PC) to the same account.
-
-```typescript
-async function listDevices() {
-  const devices = await auth.getCredentials();
-  devices.forEach(device => {
-    console.log(`Device registered on: ${new Date(device.createdAt)}`);
-  });
-}
-
-async function removeDevice(credentialId: string) {
-  await auth.removeCredential(credentialId);
-  console.log("Device revoked.");
-}
-```
-
----
-
-## 📚 API Reference
-
-### `MeshAuth` Class
-
-#### `constructor(options: MeshAuthOptions)`
-Initializes the MeshAuth client.
-- **`options.rpName`** *(string)*: Display name of your application.
-- **`options.rpId`** *(string)*: Domain of your application (e.g., `example.com`).
-- **`options.serverUrl`** *(string, optional)*: URL of your backend.
-
-#### `async register(username: string, displayName: string): Promise<Credential>`
-Initiates the WebAuthn registration flow. Prompts the user for biometric approval and creates a new Passkey.
-
-#### `async authenticate(username?: string): Promise<AuthResult>`
-Initiates the WebAuthn authentication flow.
-- Returns `{ success: true, token: string }` on success.
-- Returns `{ success: false, error: string }` on failure.
-
-#### `static isSupported(): boolean`
-Returns `true` if the browser supports WebAuthn (`window.PublicKeyCredential` exists).
-
-#### `async getCredentials(): Promise<StoredCredential[]>`
-Returns an array of locally cached credentials for the user.
-
-#### `async removeCredential(credentialId: string): Promise<void>`
-Deletes a stored credential from local cache. (Note: Should also revoke on the server).
-
----
-
-## 📡 Go Server API Endpoints
-
-The included Go server (`server/`) implements the following endpoints to handle the cryptographic heavy lifting:
-
-### `POST /register/begin`
-- **Request:** `{ "username": "user@example.com" }`
-- **Response:** `{ "challenge": "base64url...", "userID": "base64url..." }`
-- **Action:** Generates a random cryptographic challenge.
-
-### `POST /register/complete`
-- **Request:** `{ "username": "user@example.com", "credID": "...", "pubKey": "..." }`
-- **Response:** `200 OK`
-- **Action:** Verifies the WebAuthn attestation object and securely stores the Public Key for future logins.
-
-### `POST /auth/begin`
-- **Request:** `{ "username": "user@example.com" }`
-- **Response:** `{ "challenge": "base64url..." }`
-- **Action:** Generates a random cryptographic challenge for authentication.
-
-### `POST /auth/complete`
-- **Request:** `{ "username": "user@example.com", "credID": "...", "signature": "..." }`
-- **Response:** `{ "token": "jwt..." }`
-- **Action:** Verifies the signature against the stored Public Key. If valid, issues an authentication token.
-
----
-
-## 🌐 Deployment Guide
-
-### Client Side
-The client SDK can be bundled with any modern tool (Webpack, Vite, Rollup) and works in React, Vue, Svelte, or Vanilla JS.
-
-### Server Side (Go)
-1. Build the binary: `go build -o meshauth-server ./server/...`
-2. Set environment variables (e.g., `PORT`, `DB_DSN`).
-3. Deploy behind a reverse proxy (Nginx, Caddy) or deploy directly to AWS ECS, Heroku, or Render.
-4. **CRITICAL:** WebAuthn requires **HTTPS** to function. It will silently fail on HTTP (except for `localhost` during development).
-
----
-
-## ❓ FAQ
-
-**Q: What happens if a user loses their device?**
-A: With Passkeys (especially synced passkeys like Apple iCloud Keychain or Google Password Manager), the key is automatically backed up and synced to new devices. If using hardware keys, users should register multiple keys (a primary and a backup).
-
-**Q: Do I still need an email for the user?**
-A: WebAuthn doesn't strictly require an email; it just needs a unique identifier. However, collecting an email is often useful for communication or fallback access methods.
-
-**Q: Are passkeys cross-platform?**
-A: Yes! Modern devices support cross-platform authentication (e.g., using an iPhone to sign into a Windows PC via QR code).
-
----
-
-## ⚖️ License — Business Source License 1.1
-
-> **Source-available, NOT open-source. All production use requires a paid license.**
-> Replaces: Auth0, Okta, Clerk
+> **Source-available, NOT open-source. Production use requires a paid license.**
 
 | Tier | Price | For |
-|:-----|:------|:----|
-| **Indie** | $249/year | Solo developer, <$100K revenue |
-| **Startup** | $1,999/year | Up to 10-25 devs, <$5M revenue |
-| **Enterprise** | $9,999/year | Unlimited seats, unlimited revenue |
-| **OEM / White-Label** | $19,999/year | Embed in your product |
-| **Full IP Buyout** | $750,000 | Complete ownership transfer |
+|---|---|---|
+| Indie | $249/year | Solo developer, <$100K revenue |
+| Startup | $1,999/year | Up to 10-25 devs, <$5M revenue |
+| Enterprise | $9,999/year | Unlimited seats, unlimited revenue |
+| OEM / White-Label | $19,999/year | Embed in your product |
 
-**Free use limited to:** Personal evaluation, academic research, contributing via PRs.
+**Free use:** Personal evaluation, academic research, open-source contribution.
 
-📧 [soumyadebnath1661@gmail.com](mailto:soumyadebnath1661@gmail.com) · 📞 [+91 7031648617](tel:+917031648617) · 🐙 [github.com/itsoumya-d](https://github.com/itsoumya-d)
+Contact: soumyadebnath1661@gmail.com | +91 7031648617 | github.com/itsoumya-d
 
 © 2024-2026 Soumya Debnath. All Rights Reserved.
