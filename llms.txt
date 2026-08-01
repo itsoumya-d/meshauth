@@ -1,6 +1,6 @@
 # MeshAuth
 
-> Pre-release TypeScript SDK for passwordless WebAuthn/Passkey authentication. Not on npm. Browser-only WebAuthn APIs; degrades clearly when platform authenticator is unavailable.
+> MeshAuth adds passkey sign-in to a web app without running an auth server or paying per user — the WebAuthn ceremony happens between the browser and the user's own device.
 
 MeshAuth provides WebAuthn/FIDO2 passkey authentication for web applications. It wraps `navigator.credentials.create()` and `.get()`, handles serverless HMAC-SHA256 session tokens, and includes an optional Go backend for full server-side challenge/response. The package is pre-release, has no npm publication, and no production adopters as of 2026.
 
