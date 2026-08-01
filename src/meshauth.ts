@@ -2,7 +2,7 @@
 import { LicenseValidator } from "./license-validator";
 // Licensed under the Business Source License 1.1 (BSL 1.1).
 // See LICENSE file for details. Production use requires a paid license.
-// Contact: soumyadebnath1661@gmail.com | +91 7031648617
+// Contact: soumyadebnath1619@gmail.com | +91 7031648617
 
 import { WebAuthnClient } from './webauthn-client';
 import { CredentialStore } from './credential-store';

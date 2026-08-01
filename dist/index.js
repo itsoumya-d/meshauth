@@ -28,7 +28,7 @@ module.exports = __toCommonJS(index_exports);
 // src/license-validator.ts
 var LicenseValidator = class {
   static AUTHOR = "Soumya Debnath";
-  static CONTACT = "soumyadebnath1661@gmail.com";
+  static CONTACT = "soumyadebnath1619@gmail.com";
   static validate(options) {
     const key = options?.licenseKey || (typeof process !== "undefined" ? process.env.COMMERCIAL_LICENSE_KEY : void 0);
     const isDev = typeof window !== "undefined" ? window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" : typeof process !== "undefined" && process.env.NODE_ENV !== "production";
@@ -45,7 +45,7 @@ Production use of this software requires a valid paid commercial license key.
 Unlicensed commercial deployment constitutes copyright infringement under DMCA \xA7 1201.
 
 Purchase a commercial license key:
-\u{1F4E7} Email: soumyadebnath1661@gmail.com | \u{1F4DE} Phone: +91 7031648617
+\u{1F4E7} Email: soumyadebnath1619@gmail.com | \u{1F4DE} Phone: +91 7031648617
 ================================================================================
       `);
       return false;
