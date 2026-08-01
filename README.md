@@ -21,6 +21,40 @@
 
 ---
 
+> # ⛔ SECURITY WARNING — DO NOT USE THE GO SERVER FOR AUTHENTICATION
+>
+> **The bundled Go server (`server/`) performs no WebAuthn verification whatsoever.** An independent
+> audit found that `CompleteAuth` in `server/auth.go` retrieves the stored public key and immediately
+> discards it (`_, err := store.GetPublicKey(...)`), then returns a token. None of the mandatory
+> W3C WebAuthn §7.2 verification steps are performed:
+>
+> | Required step | Implemented |
+> |---|---|
+> | Verify the assertion signature against the stored public key | ❌ **No** |
+> | Compare the returned challenge to the issued one | ❌ No |
+> | Verify `origin` in clientDataJSON | ❌ No |
+> | Verify the RP ID hash | ❌ No |
+> | Verify `type` is `webauthn.get` | ❌ No |
+> | Check the signature counter for cloned authenticators | ❌ No |
+> | Check the User Present / User Verified flags | ❌ No |
+>
+> **Consequence: any HTTP POST carrying a known `{username, credId}` pair is issued a valid session
+> token.** The signature is never checked, so it does not need to be correct. This is a complete
+> authentication bypass. It is not a hardening gap — the verification code does not exist.
+>
+> Separately, the client and server do not agree on a wire format: the JS client sends
+> `{id, rawId, type, response}` while the Go handler expects `{username, credId, pubKey}`, so every
+> field deserializes empty and registration stores `SaveCredential("", "", "")`.
+>
+> **Do not deploy this server. Do not use it as a reference implementation.** If you need passkey
+> authentication today, use [`@simplewebauthn/server`](https://simplewebauthn.dev/), which implements
+> the full verification ceremony and is actively maintained. The browser-side ceremony code in
+> `src/` is a reasonable demonstration of the `navigator.credentials` API; the server is not.
+
+---
+
+---
+
 ## What is MeshAuth?
 
 MeshAuth is a TypeScript library and Go server suite that provides end-to-end passkey (WebAuthn) infrastructure. It lets you add passwordless biometric authentication to any web application using the browser's built-in `navigator.credentials` API — no cloud identity provider required.
@@ -30,7 +64,7 @@ Real exported symbols: `MeshAuth`, `EventEmitter`. Nothing is published under `@
 ### Key Features
 - Biometric authentication via WebAuthn/FIDO2 (FaceID, TouchID, Windows Hello, hardware keys)
 - Serverless mode using browser WebCrypto HMAC-SHA256 for local session tokens
-- Full challenge/response server mode with the included Go backend
+- ~~Full challenge/response server mode with the included Go backend~~ — **withdrawn: the Go server performs no verification and must not be used (see the security warning above)**
 - Conditional UI (passkey autofill) support via `mediation: 'conditional'`
 - Zero third-party dependencies in the core SDK
 
@@ -132,6 +166,11 @@ Removes a credential from local IndexedDB cache.
 - **No platform authenticator = no passkeys.** If the device has no biometric sensor and no hardware security key, `register()` and `authenticate()` will throw with a user-facing error from the browser. The library propagates this error — there is no silent fallback. Callers must implement their own fallback (magic link, password, etc.).
 - **Serverless mode token security.** In serverless mode (no `serverUrl`), JWT tokens are signed with an HMAC key stored in IndexedDB. These tokens are not verifiable by any server. They are suitable for local session state only.
 - **IndexedDB not available in all contexts.** Private browsing mode in some browsers disables IndexedDB. `getCredentials()` and `saveCredential()` will throw in those contexts.
+- **⛔ The Go server does not authenticate anything.** It performs none of the W3C WebAuthn §7.2
+  verification steps — no signature check, no challenge comparison, no origin or RP ID validation,
+  no counter check. Any POST with a known `{username, credId}` receives a token. It also does not
+  share a wire format with the JS client. See the security warning at the top of this file. Use
+  [`@simplewebauthn/server`](https://simplewebauthn.dev/) instead.
 - **No production adopters yet.** This is a proof-of-concept SDK. APIs may change without notice.
 
 ---
