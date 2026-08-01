@@ -9,7 +9,7 @@
 
 <div align="center">
   <h3>Zero-Cost, Passwordless Authentication Infrastructure</h3>
-  <p>Replace Auth0, Okta, and Firebase Auth with standard WebAuthn/FIDO2. Stop paying per-user for authentication.</p>
+  <p><b>MeshAuth adds passkey sign-in to a web app without running an auth server or paying per user — the WebAuthn ceremony happens between the browser and the user's own device.</b></p>
 
   [![License: BSL 1.1](https://img.shields.io/badge/License-BSL_1.1-red.svg)](https://mariadb.com/bsl11/)
   [![Status](https://img.shields.io/badge/status-pre--release-orange.svg)]()
