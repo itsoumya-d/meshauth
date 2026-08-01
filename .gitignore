@@ -1,4 +1,4 @@
 node_modules/
-dist/
+dist/*.map
 server/meshauth-server
 server/meshauth.db
