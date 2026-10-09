@@ -27,9 +27,11 @@ export class CredentialStore {
     const db = await this.getDB();
     return new Promise((resolve, reject) => {
       const tx = db.transaction(this.storeName, 'readwrite');
+      // A successful request can still be rolled back before the transaction commits.
+      tx.oncomplete = () => resolve();
+      tx.onabort = () => reject(tx.error || new Error('Credential transaction aborted'));
       const store = tx.objectStore(this.storeName);
       const request = store.put(credential);
-      request.onsuccess = () => resolve();
       request.onerror = () => reject(request.error);
     });
   }
@@ -49,9 +51,10 @@ export class CredentialStore {
     const db = await this.getDB();
     return new Promise((resolve, reject) => {
       const tx = db.transaction(this.storeName, 'readwrite');
+      tx.oncomplete = () => resolve();
+      tx.onabort = () => reject(tx.error || new Error('Credential transaction aborted'));
       const store = tx.objectStore(this.storeName);
       const request = store.delete(id);
-      request.onsuccess = () => resolve();
       request.onerror = () => reject(request.error);
     });
   }
